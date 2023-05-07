@@ -1,0 +1,75 @@
+﻿
+@model IEnumerable<QLDD_MVC.Models.LopHC>
+
+@using QLDD_MVC.Models;
+@{DataContextDB db = new DataContextDB(); }
+
+@{
+
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-10">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách lớp hành chính của bạn</h4>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Mã lớp hành chính
+                    </th>
+                    <th>
+                        Tên lớp hành chính
+                    </th>
+                    <th>
+                        Tên giáo viên chủ nhiệm
+                    </th>
+                    <th>
+                        Khoa
+                    </th>
+                    <th>
+                        Số lượng sinh viên
+                    </th>
+                    <th>
+                        Thao tác
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.malophc">
+
+                                <td>@item.malophc</td>
+                                <td>@item.tenlophc</td>
+                                <td>
+                                    @if (db.giangviens.Find(item.magv) != null)
+                                    {
+                                        @db.giangviens.Find(item.magv).hoten
+                                    }
+                                </td>
+                                <td>@item.khoa</td>
+                                <td>@db.Sinhviens.Where(x => x.malophc == item.malophc).Count()</td>
+
+                                <td>
+                                    @Html.ActionLink("Xem SV trong lớp", "Details", new { id = item.malophc, name = item.tenlophc }, new { @class = "btn btn-primary" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

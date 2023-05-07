@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QLDD_MVC", "QLDD_MVC\QLDD_MVC.csproj", "{3EDE1748-8606-4E6C-B523-C0954F20FC6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{0AD0AA33-C19D-4C0F-BC03-900AC8D49DDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3EDE1748-8606-4E6C-B523-C0954F20FC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EDE1748-8606-4E6C-B523-C0954F20FC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EDE1748-8606-4E6C-B523-C0954F20FC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EDE1748-8606-4E6C-B523-C0954F20FC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AD0AA33-C19D-4C0F-BC03-900AC8D49DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD0AA33-C19D-4C0F-BC03-900AC8D49DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD0AA33-C19D-4C0F-BC03-900AC8D49DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD0AA33-C19D-4C0F-BC03-900AC8D49DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {99E3DCB0-01EF-45F8-A9ED-AEB106D6C696}
+	EndGlobalSection
+EndGlobal

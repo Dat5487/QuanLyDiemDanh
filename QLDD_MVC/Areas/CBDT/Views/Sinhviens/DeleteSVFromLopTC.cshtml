@@ -1,0 +1,44 @@
+﻿@model QLDD_MVC.Models.LopTC_SV
+
+@{
+    ViewBag.Title = "DeleteSVFromLopTC";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4 mx-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary"> Xác nhận xóa sinh viên @ViewBag.hoten</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <dl class="dl-horizontal mx-2">
+                <dt>
+                    @Html.DisplayNameFor(model => model.maloptc)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.maloptc)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.masv)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.masv)
+                </dd>
+            </dl>
+            <div class="form-group mx-2">
+                <div class="col-md-offset-2 ">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" value=@ViewBag.maloptc name="maloptc"class="btn btn-primary" />
+                        <input type="submit" value="Xóa" class="btn btn-primary" />
+                        <a class="btn btn-danger" href="##" onClick="history.go(-1); return false;">Hủy</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

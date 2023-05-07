@@ -1,0 +1,71 @@
+﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-11">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
+                </div>
+                <div>
+                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mt-2"><h4>Giáo viên chủ nhiệm : @ViewBag.tengv</h4></div>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Mã sinh viên
+                    </th>
+                    <th>
+                        Họ tên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        Khoa
+                    </th>
+                    <th>
+                        Thao tác
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.masv">
+                                <td>@item.masv</td>
+                                <td>@item.hoten</td>
+                                <td>
+                                    @if (item.gioitinh == true)
+                                    {
+                                        <text>Nam</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Nữ</text>
+                                    }
+                                </td>
+                                <td>@item.khoa</td>
+                                <td>
+                                    @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv }, new { @class = "btn btn-primary" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

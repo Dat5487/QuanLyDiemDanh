@@ -1,0 +1,88 @@
+﻿@model IEnumerable<QLDD_MVC.Models.TaiKhoan>
+
+@using QLDD_MVC.Models;
+@{DataContextDB db = new DataContextDB(); }
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/QTV/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-10">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách tài khoản</h4>
+                </div>
+                <div class="float-end ">
+                    @Html.ActionLink("Thêm tài khoản", "Create", null, new { @class = "btn btn-success" })
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Tên đăng nhập
+                    </th>
+                    <th>
+                        Họ tên
+                    </th>
+                    <th>
+                        Phân quyền
+                    </th>
+                    <th>
+                        Mật khẩu
+                    </th>
+                    <th>
+                        Thao tác
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.username">
+
+                                <td>@item.username</td>
+                                <td>@item.hoten</td>
+                                <td>@item.phanquyen</td>
+                                <td>@item.password</td>
+                                <td>
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.username.TrimEnd(' ') }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { id = item.username.TrimEnd(' ') }, new { @class = "btn btn-danger" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+
+                },
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

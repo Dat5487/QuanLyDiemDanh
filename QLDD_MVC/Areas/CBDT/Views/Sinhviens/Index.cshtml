@@ -1,0 +1,86 @@
+﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
+@using QLDD_MVC.Models;
+@{DataContextDB db = new DataContextDB(); }
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-10">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
+                </div>
+                <div class="float-end ">
+                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success" })
+                    @if (ViewBag.root == "DsLopHC")
+                    {
+                        @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger" })
+                    }
+                    else if (ViewBag.root == "DsLopHCofGV")
+                    {
+                        @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { }, new { @class = "btn btn-danger" })
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mt-2"><h4>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h4></div>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Mã sinh viên
+                    </th>
+                    <th>
+                        Họ tên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        Khoa
+                    </th>
+                    <th>
+                        Thao tác
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.masv">
+                                <td>@item.masv</td>
+                                <td>@item.hoten</td>
+                                <td>
+                                    @if (item.gioitinh == true)
+                                    {
+                                        <text>Nam</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Nữ</text>
+                                    }
+                                </td>
+                                <td>@item.khoa</td>
+                                <td>
+                                    @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv, root = "DsSVLopHC" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.masv }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { id = item.masv }, new { @class = "btn btn-danger" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

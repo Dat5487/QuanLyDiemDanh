@@ -1,0 +1,105 @@
+﻿@model IEnumerable<QLDD_MVC.Models.chitietdd>
+
+@using QLDD_MVC.Models;
+@{DataContextDB db = new DataContextDB(); }
+@{
+    ViewBag.Title = "Index_LopHC";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-11">
+                    <h4 class="m-0 font-weight-bold text-primary">Thông tin điểm danh của sinh viên @ViewBag.hoten</h4>
+                </div>
+                <div class="float-end ">
+                    @if (ViewBag.root == "DsAllSV")
+                    {
+                        @Html.ActionLink("Quay lại", "DsAllSinhVien", "Sinhviens", new { }, new { @class = "btn btn-danger" })
+                    }
+                    else if (ViewBag.root == "DsSVLopHC")
+                    {
+                        @Html.ActionLink("Quay lại", "Index", "Sinhviens", new { id=ViewBag.malophc, root="DsLopHC" }, new { @class = "btn btn-danger" })
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Họ và tên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        Tên lớp hành chính
+                    </th>
+                    <th>
+                        Lớp tín chỉ
+                    </th>
+                    <th>
+                        Tên học phần
+                    </th>
+                    <th>
+                        Thời gian điểm danh
+                    </th>
+                    <th>
+                        Trạng thái
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            int? maloptc = db.diemdanhs.Find(item.madd).maloptc;
+
+                            <tr id="row_@item.id">
+                                <td>@ViewBag.hoten</td>
+                                <td>
+                                    @if (ViewBag.gioitinh == true)
+                                    {
+                                        <text>Nam</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Nữ</text>
+                                    }
+                                </td>
+                                <td>@ViewBag.tenlophc</td>
+                                <td>@db.LopTCs.Find(maloptc).tenltc</td>
+                                <td>
+                                    @if (db.Hocphans.Find(db.LopTCs.Find(maloptc).mahp) != null)
+                                    {
+                                        @db.Hocphans.Find(db.LopTCs.Find(maloptc).mahp).tenhp;
+                                    }
+                                    else
+                                    {
+                                        <text>Mã Hp không tồn tại</text>
+                                    }
+                                </td>
+                                <td>@item.thoigiandd</td>
+                                <td>
+                                    @if (item.trangthai == true)
+                                    {
+                                        <text>Có mặt</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Vắng</text>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

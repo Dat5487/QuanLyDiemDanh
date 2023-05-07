@@ -1,0 +1,135 @@
+﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
+@using QLDD_MVC.Models;
+@{DataContextDB db = new DataContextDB(); }
+@{int maloptc = @ViewBag.maloptc; }
+@{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();}
+
+
+
+@{
+    ViewBag.Title = "Index_LopTC";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-7 ">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp tín chỉ : @ViewBag.tentc</h4>
+                </div>
+                <div class="float-end">
+                    @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { id = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success" })
+                </div>
+                <div class="dropdown show px-1">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Thông tin điểm danh theo ngày
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        @{
+                            if (dsmadd.Count() == 0)
+                            {
+                                <h6 class="px-2">Lớp chưa có hoạt động điểm danh</h6>
+                            }
+                            else
+                            {
+                                foreach (int madd in dsmadd)
+                                {
+                                    @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("yyyy-MM-dd"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                @if (ViewBag.root == "DsLopTC")
+                {
+                    @Html.ActionLink("Quay lại", "Index", "LopTCs", new { }, new { @class = "btn btn-danger" })
+                }
+                else if (ViewBag.root == "DsLopTCofGV")
+                {
+                    @Html.ActionLink("Quay lại", "ListLopTCofGV", "LopTCs", new { }, new { @class = "btn btn-danger" })
+                }
+            </div>
+
+        </div>
+        <div class="card-body">
+
+            <div class="mt-2"><h4>Họ tên giáo viên lớp tín chỉ : @ViewBag.tengv</h4></div>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <th>
+                        Mã sinh viên
+                    </th>
+                    <th>
+                        Họ tên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        Tên lớp hành chính
+                    </th>
+                    <th>
+                        Khoa
+                    </th>
+                    <th>
+                        Số buổi đã điểm danh
+                    </th>
+                    <th>
+                        Thao tác
+                    </th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            int sobuoidd = 0;
+                            foreach (int madd in dsmadd)
+                            {
+                                if(db.chitietdds.Where(x => x.madd == madd && x.masv == item.masv).FirstOrDefault() != null)
+                                {
+                                    if (db.chitietdds.Where(x => x.madd == madd && x.masv == item.masv).FirstOrDefault().trangthai == true)
+                                    {
+                                        sobuoidd++;
+                                    }
+                                }
+                            }
+
+
+                            <tr id="row_@item.masv">
+                                <td>@item.masv</td>
+                                <td>@item.hoten</td>
+                                <td>
+                                    @if (item.gioitinh == true)
+                                    {
+                                        <text>Nam</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Nữ</text>
+                                    }
+                                </td>
+                                <td>
+                                    @if (db.LopHCs.Find(item.malophc) != null)
+                                    {
+                                        @db.LopHCs.Find(item.malophc).tenlophc;
+                                    }
+                                </td>
+                                <td>@item.khoa</td>
+                                <td>@sobuoidd</td>
+                                <td>
+                                    @Html.ActionLink("Xóa", "DeleteSVFromLopTC", new { masv = item.masv, maloptc = @ViewBag.maloptc }, new { @class = "btn btn-danger" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

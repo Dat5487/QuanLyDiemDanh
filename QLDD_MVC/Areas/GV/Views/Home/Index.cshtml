@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/style.css" rel="stylesheet" />
+
+<div class="team-boxed">
+    <div class="container">
+        <div class="intro">
+            <h2 class="text-center">Quản lý lớp học của bạn</h2>
+        </div>
+        <div class="row people">
+            <div class="col-md-6 col-lg-6 item">
+                <div class="box">
+                    <img class="rounded" src="~/Content/img/class2.png">
+                    <h3 class="name">Lớp hành chính của bạn</h3>
+                    <p class="description">Hiện tại bạn có @ViewBag.sllophcofgv lớp hành chính.<br>Bấm vào nút bên dưới để quản lý các lớp hành chính của bạn.</p>
+                    <a href="~/GV/LopHCs" type="button" class="btn btn-primary">Quản lý lớp hành chính của bạn</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 item">
+                <div class="box">
+                    <img class="rounded-circle" src="~/Content/img/class.png">
+                    <h3 class="name">Lớp tín chỉ của bạn</h3>
+                    <p class="description">Hiện tại bạn có @ViewBag.slloptcofgv lớp tín chỉ trong hệ thống.<br>Bấm vào nút bên dưới để quản lý lớp tín chỉ của bạn.</p>
+                    <a href="~/GV/LopTCs" type="button" class="btn btn-primary">Quản lý lớp tín chỉ của bạn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model QLDD_MVC.Models.giangvien
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Areas/QTV/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4 mx-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Xác nhận xóa</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <dl class="dl-horizontal mx-2">
+                <dt>
+                    @Html.DisplayNameFor(model => model.hoten)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.hoten)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.gioitinh)
+                </dt>
+
+                <dd>
+                    @if (Model.gioitinh == true)
+                    {
+                        <text>Nam</text>
+                    }
+                    else
+                    {
+                        <text>Nữ</text>
+                    }
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.diachi)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.diachi)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.email)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.email)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.sdt)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.sdt)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.username)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.username)
+                </dd>
+            </dl>
+            <div class="form-group mx-2">
+                <div class="col-md-offset-2 ">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="Xóa" class="btn btn-primary" />
+                        @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-danger" })
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

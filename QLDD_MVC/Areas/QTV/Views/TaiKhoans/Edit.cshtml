@@ -1,0 +1,106 @@
+﻿@model QLDD_MVC.Models.TaiKhoan
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/QTV/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h4 class="m-0 font-weight-bold text-primary">Chỉnh sửa tài khoản</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.username)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.username, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input value=@Model.username class="form-control" readonly />
+                            @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.hoten, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.hoten, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.hoten, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.phanquyen, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @if (Model.phanquyen == "Quản trị viên")
+                            {
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio1" name="phanquyen" value="Quản trị viên" checked>Quản trị viên
+                                    <label class="form-check-label" for="radio1"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo">Cán bộ đào tạo
+                                    <label class="form-check-label" for="radio2"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio3" name="phanquyen" value="Giảng viên">Giảng viên
+                                    <label class="form-check-label" for="radi3"></label>
+                                </div>
+                            }
+                            else if (Model.phanquyen == "Cán bộ đào tạo")
+                            {
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio1" name="phanquyen" value="Quản trị viên">Quản trị viên
+                                    <label class="form-check-label" for="radio1"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo" checked>Cán bộ đào tạo
+                                    <label class="form-check-label" for="radio2"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio3" name="phanquyen" value="Giảng viên">Giảng viên
+                                    <label class="form-check-label" for="radi3"></label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio1" name="phanquyen" value="Quản trị viên">Quản trị viên
+                                    <label class="form-check-label" for="radio1"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo">Cán bộ đào tạo
+                                    <label class="form-check-label" for="radio2"></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="radio3" name="phanquyen" value="Giảng viên" checked>Giảng viên
+                                    <label class="form-check-label" for="radi3"></label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group mx-2">
+                        <div class="col-md-offset-2 ">
+                            <input type="submit" value="Lưu" class="btn btn-primary" />
+                            @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+

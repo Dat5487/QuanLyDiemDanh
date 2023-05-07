@@ -1,0 +1,84 @@
+﻿@model QLDD_MVC.Models.LopHC
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h4 class="m-0 font-weight-bold text-primary">Chỉnh sửa thông tin lớp hành chính</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.malophc)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.tenlophc, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.tenlophc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.tenlophc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.magv, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.magv, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.magv, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.khoa, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <select disabled class="form-control" name="khoa">
+                                <option value=''></option>
+                                @if (Model.khoa == "Công nghệ thông tin")
+                                {
+                                    <option selected value="Công nghệ thông tin">Công nghệ thông tin</option>
+                                }
+                                else
+                                {
+                                    <option value="Công nghệ thông tin">Công nghệ thông tin</option>
+                                }
+
+                                @if (Model.khoa == "Du lịch")
+                                {
+                                    <option selected value="Du lịch">Du lịch</option>
+                                }
+                                else
+                                {
+                                    <option value="Du lịch">Du lịch</option>
+                                }
+
+                                @if (Model.khoa == "Ngoại ngữ")
+                                {
+                                    <option selected value="Ngoại ngữ">Ngoại ngữ</option>
+                                }
+                                else
+                                {
+                                    <option value="Ngoại ngữ">Ngoại ngữ</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mx-2">
+                        <div class="col-md-offset-2 ">
+                            <input type="submit" value="Lưu" class="btn btn-primary" />
+                            <a class="btn btn-danger" href="##" onClick="history.go(-1); return false;">Hủy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

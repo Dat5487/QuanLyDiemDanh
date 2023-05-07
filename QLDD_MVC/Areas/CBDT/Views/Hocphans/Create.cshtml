@@ -1,0 +1,52 @@
+﻿@model QLDD_MVC.Models.Hocphan
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card shadow mb-4 mx-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Thêm lớp học phần mới</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.mahp, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.mahp, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.mahp, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.tenhp, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.tenhp, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.tenhp, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.sotc, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.sotc, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.sotc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group mx-2">
+                    <div class="col-md-offset-2 ">
+                        <input type="submit" value="Thêm" class="btn btn-primary" />
+                        <a class="btn btn-danger" href="##" onClick="history.go(-1); return false;">Hủy</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

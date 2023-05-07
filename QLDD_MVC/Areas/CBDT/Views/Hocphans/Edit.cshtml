@@ -1,0 +1,49 @@
+﻿@model QLDD_MVC.Models.Hocphan
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h4 class="m-0 font-weight-bold text-primary">Chỉnh sửa thông tin học phần</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.mahp)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.tenhp, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.tenhp, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.tenhp, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.sotc, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.sotc, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.sotc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group mx-2">
+                        <div class="col-md-offset-2 ">
+                            <input type="submit" value="Lưu" class="btn btn-primary" />
+                            <a class="btn btn-danger" href="##" onClick="history.go(-1); return false;">Hủy</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
