@@ -22,7 +22,14 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             ViewData["slhocphan"] = db.Hocphans.Count();
             ViewData["slloptc"] = db.LopTCs.Count();
             ViewData["sllophc"] = db.LopHCs.Count();
-            ViewData["sllophcofgv"] = dao.ListAllLopHCofGVPaging(magv).Count();
+            if(dao.ListAllLopHCofGVPaging(magv) == null)
+            {
+                ViewData["sllophcofgv"] = 0;
+            }
+            else
+            {
+                ViewData["sllophcofgv"] = dao.ListAllLopHCofGVPaging(magv).Count();
+            }
             ViewData["slloptcofgv"] = dao.ListAllLopTCofGVPaging(magv).Count();
 
             return View();

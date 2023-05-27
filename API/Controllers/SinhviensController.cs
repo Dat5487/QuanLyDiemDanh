@@ -19,9 +19,27 @@ namespace API.Controllers
         private DataContextDB db = new DataContextDB();
 
         [Route("GetAllSinhviens")]
+        //public IHttpActionResult GetAllSinhviens()
+        //{
+        //    var sinhvien = db.Sinhviens;
+        //    var listtempsv = new List<ApiSinhvien>();
+        //    foreach (Sinhvien x in sinhvien)
+        //    {
+        //        ApiSinhvien sv = new ApiSinhvien();
+        //        sv.hoten = x.hoten;
+        //        sv.khoa = x.khoa;
+        //        sv.tenlophc = db.LopHCs.FirstOrDefault(a => a.malophc == x.malophc).tenlophc;
+        //        sv.gioitinh = x.gioitinh;
+        //        sv.masv = x.masv;
+        //        listtempsv.Add(sv);
+        //    }
+        //    IEnumerable<ApiSinhvien> model = listtempsv.AsQueryable();
+        //    return Ok(model);
+        //}
         public IHttpActionResult GetAllSinhviens()
         {
             var sinhvien = db.Sinhviens;
+
             return Ok(sinhvien);
         }
 
