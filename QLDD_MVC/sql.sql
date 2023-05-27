@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[chitietdd](
 	[madd] [int] NOT NULL,
 	[masv] [int] NOT NULL,
 	[thoigiandd] [datetime] NOT NULL,
-	[trangthai] [bit] NOT NULL,
+	[trangthai] [bit] NULL,
 
  CONSTRAINT [PK_chitietdd] PRIMARY KEY CLUSTERED 
 (
@@ -36,8 +36,8 @@ GO
 CREATE TABLE [dbo].[diemdanh](
 	[madd] [int] IDENTITY(1,1) NOT NULL,
 	[maloptc] [int] NOT NULL,
-	[ngaydd] [datetime] NOT NULL,
-	[diadiem] [nvarchar](50) NULL,
+	[ngaydd] [date] NOT NULL,
+	[diadiem] [nvarchar](20) NULL,
  CONSTRAINT [PK_diemdanh] PRIMARY KEY CLUSTERED 
 (
 	[madd] ASC
@@ -106,8 +106,8 @@ GO
 CREATE TABLE [dbo].[LopHC](
 	[malophc] [int] IDENTITY(1,1) NOT NULL,
 	[tenlophc] [nvarchar](50) NOT NULL,
-	[magv] [int] NULL,
-	[khoa] [nvarchar](50) NOT NULL,
+	[magv] [int] NOT NULL,
+	[khoa] [nvarchar](50) NULL,
  CONSTRAINT [PK_LopHC] PRIMARY KEY CLUSTERED 
 (
 	[malophc] ASC
@@ -122,8 +122,8 @@ GO
 CREATE TABLE [dbo].[LopTC](
 	[maloptc] [int] IDENTITY(1,1) NOT NULL,
 	[mahp] [nchar](10) NOT NULL,
-	[tenltc] [nvarchar](30) NOT NULL,
-	[magv] [int] NULL,
+	[tenltc] [nvarchar](30) NULL,
+	[magv] [int] NOT NULL,
 	[trangthai] [bit] NOT NULL,
 	[sttlop] [int] NULL,
  CONSTRAINT [PK_LopTC] PRIMARY KEY CLUSTERED 
@@ -140,7 +140,7 @@ GO
 CREATE TABLE [dbo].[Hocphan](
 	[mahp] [nchar](10) NOT NULL,
 	[tenhp] [nvarchar](50) NOT NULL,
-	[sotc] [int] NULL,
+	[sotc] [int] NOT NULL,
  CONSTRAINT [PK_Hocpha] PRIMARY KEY CLUSTERED 
 (
 	[mahp] ASC
@@ -159,6 +159,8 @@ CREATE TABLE [dbo].[Sinhvien](
 	[gioitinh] [bit] NOT NULL,
 	[malophc] [int] NULL,
 	[khoa] [nvarchar](50) NULL,
+	[EmbFace] [ntext] NULL,
+
  CONSTRAINT [PK_Sinhvien] PRIMARY KEY CLUSTERED 
 (
 	[masv] ASC
@@ -174,7 +176,7 @@ CREATE TABLE [dbo].[TaiKhoan](
 	[username] [nchar](20) NOT NULL,
 	[hoten] [nvarchar](50) NULL,
 	[phanquyen] [nvarchar](50) NOT NULL,
-	[password] [nchar](20) NULL,
+	[password] [nchar](20) NOT NULL,
  CONSTRAINT [PK_TaiKhoan_1] PRIMARY KEY CLUSTERED 
 (
 	[username] ASC
@@ -227,11 +229,6 @@ INSERT INTO GVCN(magv, malophc,username)
 VALUES ('1', '1','giangvien'),
 		('2', '2','giangvien2'),
 		('3', '3','cbdt');
-
-INSERT INTO Sinhvien(hoten, gioitinh,malophc,khoa)
-VALUES (N'Trần A', 'True', '1', N'CNTT'),
-		(N'Nguyễn B', 'False', '1', N'CNTT'),
-		(N'Trần B', 'True', '2', N'CNTT');
 
 
 

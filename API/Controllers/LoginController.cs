@@ -46,7 +46,7 @@ namespace API.Controllers
                     ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
                     foreach (int ma1loptc in ds_maloptc)
                     {
-                        if (db.Sinhviens.Find(ma1loptc) != null)
+                        //if (db.Sinhviens.Find(ma1loptc) != null)
                             listtemploptc.Add(db.LopTCs.Find(ma1loptc));
                     }
 
