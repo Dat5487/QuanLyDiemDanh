@@ -51,7 +51,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Index_LopTC","Sinhviens", new { id = id,root = root});
+            return RedirectToAction("Index_LopTC", "Sinhviens", new { id = id,root = root});
         }
 
         // GET: CBDT/LopTCs/Create

@@ -15,8 +15,8 @@
                 <div class="col-11">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
-                <div>
-                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger" })
+                <div class="col-1">
+                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger float-right" })
                 </div>
             </div>
         </div>

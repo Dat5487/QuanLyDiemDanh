@@ -17,15 +17,17 @@
                 <div class="col-11">
                     <h4 class="m-0 font-weight-bold text-primary">Thông tin điểm danh của sinh viên @ViewBag.hoten</h4>
                 </div>
-                <div class="float-end ">
-                    @if (ViewBag.root == "DsAllSV")
+                <div class="col-1">
+                    @*@if (ViewBag.root == "DsAllSV")
                     {
                         @Html.ActionLink("Quay lại", "DsAllSinhVien", "Sinhviens", new { }, new { @class = "btn btn-danger" })
                     }
                     else if (ViewBag.root == "DsSVLopHC")
                     {
-                        @Html.ActionLink("Quay lại", "Index", "Sinhviens", new { id=ViewBag.malophc, root="DsLopHC" }, new { @class = "btn btn-danger" })
-                    }
+                        @Html.ActionLink("Quay lại", "Index", "Sinhviens", new { id = ViewBag.malophc, root = "DsLopHC" }, new { @class = "btn btn-danger" })
+                    }*@
+                    <a class="btn btn-danger float-right" href="##" onClick="history.go(-1); return false;">Quay lại</a>
+
                 </div>
             </div>
         </div>

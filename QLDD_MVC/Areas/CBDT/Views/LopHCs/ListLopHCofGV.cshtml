@@ -59,7 +59,7 @@
                                 <td>@db.Sinhviens.Where(x => x.malophc == item.malophc).Count()</td>
 
                                 <td>
-                                    @Html.ActionLink("Xem SV trong lớp", "Details", new { id = item.malophc, name = item.tenlophc, root = "DsLopHCofGV" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Xem SV trong lớp", "DSSVofLopHC", "Sinhviens", new { id = item.malophc, root = "DsLopHCofGV" }, new { @class = "btn btn-primary" })
                                 </td>
                             </tr>
                         }

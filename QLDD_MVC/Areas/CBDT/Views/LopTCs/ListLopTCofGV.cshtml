@@ -77,7 +77,7 @@
                                 </td>
                                 <td>@db.LopTC_SV.Where(x => x.maloptc == item.maloptc).Count()</td>
                                 <td>
-                                    @Html.ActionLink("Xem SV trong lớp", "Details", new { id = item.maloptc, root = "DsLopTCofGV" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Xem SV trong lớp", "DSSVofLopTC", "Sinhviens", new { id = item.maloptc, root = "DsLopTCofGV" }, new { @class = "btn btn-primary" })
                                 </td>
                             </tr>
                         }

@@ -2185,6 +2185,8 @@
     <Content Include="Areas\CBDT\Views\Hocphans\Edit.cshtml" />
     <Content Include="Areas\CBDT\Views\Hocphans\Index.cshtml" />
     <Content Include="Dao\Book1.xlsx" />
+    <Content Include="Areas\CBDT\Views\Sinhviens\DSSVofLopHC.cshtml" />
+    <Content Include="Areas\CBDT\Views\Sinhviens\DSSVofLopTC.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

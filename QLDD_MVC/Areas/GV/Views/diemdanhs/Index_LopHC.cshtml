@@ -19,8 +19,8 @@
                     <h4 class="m-0 font-weight-bold text-primary">Thông tin điểm danh của sinh viên @ViewBag.hoten</h4>
                     <h4 class="m-0 font-weight-bold text-primary">Lớp @ViewBag.tenlophc</h4>
                 </div>
-                <div>
-                    @Html.ActionLink("Quay lại", "Index", "Sinhviens", new {id = ViewBag.malophc }, new { @class = "btn btn-danger" })
+                <div class="col-1">
+                    @Html.ActionLink("Quay lại", "Index", "Sinhviens", new {id = ViewBag.malophc }, new { @class = "btn btn-danger float-right" })
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
                             <tr id="row_@item.id">
                                 <td>@ViewBag.hoten</td>
                                 <td>
-                                    @if (ViewBag.gioitinh == true)
+                                    @if (ViewBag.gioitinh == "Nam")
                                     {
                                         <text>Nam</text>
                                     }
