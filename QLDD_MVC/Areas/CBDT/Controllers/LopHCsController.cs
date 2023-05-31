@@ -10,6 +10,11 @@ using QLDD_MVC.Areas.CBDT.Data;
 using QLDD_MVC.Areas.QTV.Controllers;
 using QLDD_MVC.Controllers;
 using QLDD_MVC.Models;
+using System.Data.Odbc;
+using System.Configuration;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.IO;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
@@ -24,6 +29,8 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             var model = dao.ListAllLopHCPaging();
             return View(model);
         }
+
+
         public ActionResult ListLopHCofGV()
         {
             LoginController lg = new LoginController();
@@ -180,6 +187,8 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             gvcn.DeleteGVCN(gv.magv, lopHC.malophc);
             return RedirectToAction("Index");
         }
+
+
 
         protected override void Dispose(bool disposing)
         {

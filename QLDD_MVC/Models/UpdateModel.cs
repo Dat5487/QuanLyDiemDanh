@@ -7,7 +7,7 @@ namespace QLDD_MVC.Models
 {
     public class UpdateModel
     {
-        public int masv { get; set; }
+        public string masv { get; set; }
 
         public string EmbFace { get; set; }
 

@@ -3,6 +3,7 @@
 @{DataContextDB db = new DataContextDB(); }
 @{int maloptc = @ViewBag.maloptc; }
 @{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();}
+@{ int sobuoidadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).Count();}
 
 
 
@@ -18,10 +19,39 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-7 ">
+                <div class="col-8 ">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp tín chỉ : @ViewBag.tentc</h4>
                 </div>
                 <div class="float-end">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        <i class="fa fa-plus-circle"></i> Nhập File Excel
+                    </button>
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Nhập File Excel</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <form method="post" enctype="multipart/form-data">
+                                                <div class="d-flex justify-content-center">
+                                                    <input name="file" type="file" required />
+                                                    <input value=@ViewBag.maloptc name="maloptc" class=" form-control" hidden />
+                                                    <button class="btn btn-success" type="submit">Nhập</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { id = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success" })
                 </div>
                 <div class="dropdown show px-1">
@@ -57,7 +87,9 @@
         </div>
         <div class="card-body">
 
-            <div class="mt-2"><h4>Họ tên giáo viên lớp tín chỉ : @ViewBag.tengv</h4></div>
+            <div class="mt-1"><h4>Họ tên giáo viên lớp tín chỉ : @ViewBag.tengv</h4></div>
+            <div class="mt-1"><h4>Tổng số buổi đã điểm danh : @sobuoidadd</h4></div>
+
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -74,10 +106,10 @@
                         Tên lớp hành chính
                     </th>
                     <th>
-                        Khoa
+                        Số buổi có mặt
                     </th>
                     <th>
-                        Số buổi đã điểm danh
+                        Số buổi vắng
                     </th>
                     <th>
                         Thao tác
@@ -87,13 +119,18 @@
                         @foreach (var item in Model)
                         {
                             int sobuoidd = 0;
+                            int sobuoivang = 0;
                             foreach (int madd in dsmadd)
                             {
-                                if(db.chitietdds.Where(x => x.madd == madd && x.masv == item.masv).FirstOrDefault() != null)
+                                if (db.chitietdds.Where(x => x.madd == madd && x.masv.Equals(item.masv)).FirstOrDefault() != null)
                                 {
-                                    if (db.chitietdds.Where(x => x.madd == madd && x.masv == item.masv).FirstOrDefault().trangthai == true)
+                                    if (db.chitietdds.Where(x => x.madd == madd && x.masv.Equals(item.masv)).FirstOrDefault().trangthai == true)
                                     {
                                         sobuoidd++;
+                                    }
+                                    else
+                                    {
+                                        sobuoivang++;
                                     }
                                 }
                             }
@@ -102,24 +139,15 @@
                             <tr id="row_@item.masv">
                                 <td>@item.masv</td>
                                 <td>@item.hoten</td>
-                                <td>
-                                    @if (item.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
-                                </td>
+                                <td>@item.gioitinh</td>
                                 <td>
                                     @if (db.LopHCs.Find(item.malophc) != null)
                                     {
                                         @db.LopHCs.Find(item.malophc).tenlophc;
                                     }
                                 </td>
-                                <td>@item.khoa</td>
                                 <td>@sobuoidd</td>
+                                <td>@sobuoivang</td>
                                 <td>
                                     @Html.ActionLink("Xóa", "DeleteSVFromLopTC", new { masv = item.masv, maloptc = @ViewBag.maloptc }, new { @class = "btn btn-danger" })
                                 </td>

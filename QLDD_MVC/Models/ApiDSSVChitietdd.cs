@@ -14,7 +14,7 @@ namespace QLDD_MVC.Models
         public string hoten { get; set; }
 
         [DisplayName("Giới tính")]
-        public bool gioitinh { get; set; }
+        public string gioitinh { get; set; }
 
         [DisplayName("Thời gian điểm danh")]
         public DateTime thoigiandd { get; set; }

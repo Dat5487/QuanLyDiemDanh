@@ -81,6 +81,36 @@
                                 <td>
                                     @Html.ActionLink("Xem SV trong lớp", "Details", new { id = item.maloptc, root = "DsLopTC" }, new { @class = "btn btn-primary" })
                                     @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.maloptc }, new { @class = "btn btn-warning" })
+                                    @*@Html.ActionLink("Xóa SV trong lớp", "DeleteAllSV", new { id = item.maloptc }, new { @class = "btn btn-warning" })
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                        <i class="fa fa-plus-circle"></i> Nhập File Excel
+                                    </button>
+                                    <div class="modal fade" id="myModal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title">Nhập File Excel</h4>
+                                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <form method="post" enctype="multipart/form-data">
+                                                                <div class="d-flex justify-content-center">
+                                                                    <input name="file" type="file" required />
+                                                                    <input value=@ViewBag.malophc name="malophc" class=" form-control" hidden />
+                                                                    <button class="btn btn-success" type="submit">Nhập</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
                                     @Html.ActionLink("Xóa", "Delete", new { id = item.maloptc }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>

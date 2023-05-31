@@ -11,14 +11,14 @@
     {
         [Key]
         [DisplayName("Mã sinh viên")]
-        public int masv { get; set; }
+        public string masv { get; set; }
 
         [StringLength(50)]
         [DisplayName("Họ tên")]
         public string hoten { get; set; }
 
         [DisplayName("Giới tính")]
-        public bool gioitinh { get; set; }
+        public string gioitinh { get; set; }
 
         [DisplayName("Tên lớp hành chính")]
         public string tenlophc { get; set; }

@@ -17,9 +17,9 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
     {
         private DataContextDB db = new DataContextDB();
 
-        public ActionResult Index_LopHC(int masv,string root)
+        public ActionResult Index_LopHC(string masv,string root)
         {
-            var model = db.chitietdds.Where(x => x.masv == masv);
+            var model = db.chitietdds.Where(x => x.masv.Equals(masv));
             ViewData["hoten"] = db.Sinhviens.Find(masv).hoten;
             ViewData["gioitinh"] = db.Sinhviens.Find(masv).gioitinh;
             ViewData["tenlophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).tenlophc;
@@ -37,7 +37,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             var ttddofdate = db.chitietdds.Where(x => x.madd == madd);
             var ds_masv = ttddofdate.Select(x => x.masv).ToList();
 
-            foreach (int ma1sv in ds_masv)
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                 {
@@ -48,9 +48,9 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                     svdd.hoten = sv.hoten;
                     svdd.gioitinh = sv.gioitinh;
                     svdd.khoa = sv.khoa;
-                    svdd.thoigiandd = db.chitietdds.Where(x => x.madd == madd && x.masv == sv.masv).FirstOrDefault().thoigiandd;
+                    svdd.thoigiandd = db.chitietdds.Where(x => x.madd == madd && x.masv.Equals(sv.masv)).FirstOrDefault().thoigiandd;
                     svdd.tenlophc = db.LopHCs.Find(sv.malophc).tenlophc;
-                    svdd.trangthai = ttddofdate.Where(x => x.masv == ma1sv).FirstOrDefault().trangthai;
+                    svdd.trangthai = ttddofdate.Where(x => x.masv.Equals(ma1sv)).FirstOrDefault().trangthai;
                     listtempsv.Add(svdd);
                 }
             }

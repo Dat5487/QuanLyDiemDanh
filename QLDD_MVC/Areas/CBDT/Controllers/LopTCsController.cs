@@ -149,6 +149,20 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
 
             return View(lopTC);
         }
+        public ActionResult DeleteAllSV(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            LopTC lopTC = db.LopTCs.Find(id);
+            if (lopTC == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(lopTC);
+        }
 
         // POST: CBDT/LopTCs/Delete/5
         [HttpPost, ActionName("Delete")]

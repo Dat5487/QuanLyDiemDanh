@@ -47,16 +47,7 @@
                             <tr id="row_@item.masv">
                                 <td>@item.masv</td>
                                 <td>@item.hoten</td>
-                                <td>
-                                    @if (item.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
-                                </td>
+                                <td>@item.gioitinh</td>
                                 <td>@item.khoa</td>
                                 <td>
                                     @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv }, new { @class = "btn btn-primary" })

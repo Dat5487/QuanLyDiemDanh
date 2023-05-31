@@ -23,7 +23,7 @@
             da1.Fill(ds, "chitietdd");
         }
 
-        public void CreateChitietdd(int madd, int masv)
+        public void CreateChitietdd(int madd, string masv)
         {
             DataRow r = ds.Tables["chitietdd"].NewRow();
             r["madd"] = madd;
@@ -36,7 +36,7 @@
             ds.AcceptChanges();
         }
 
-        public void DeleteChitietdd(int madd, int masv)
+        public void DeleteChitietdd(int madd, string masv)
         {
             string query = String.Format("madd = {0} AND masv = {1}", madd, masv);
             DataRow[] rows = ds.Tables["chitietdd"].Select(query);
@@ -44,7 +44,7 @@
             da1.Update(ds, "chitietdd");
             ds.AcceptChanges();
         }
-        public void EditChitietdd(int madd, int masv)
+        public void EditChitietdd(int madd, string masv)
         {
             var now = DateTime.Now.Date;
             string query = String.Format("madd = '{0}' AND masv = '{1}'", madd, masv);
@@ -66,7 +66,7 @@
         public int madd { get; set; }
 
         [DisplayName("Mã sinh viên")]
-        public int? masv { get; set; }
+        public string masv { get; set; }
 
         public DateTime thoigiandd { get; set; }
 

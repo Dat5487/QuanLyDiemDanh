@@ -2184,6 +2184,7 @@
     <Content Include="Areas\CBDT\Views\Hocphans\Delete.cshtml" />
     <Content Include="Areas\CBDT\Views\Hocphans\Edit.cshtml" />
     <Content Include="Areas\CBDT\Views\Hocphans\Index.cshtml" />
+    <Content Include="Dao\Book1.xlsx" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

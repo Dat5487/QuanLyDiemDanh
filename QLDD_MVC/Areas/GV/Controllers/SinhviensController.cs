@@ -55,10 +55,10 @@ namespace QLDD_MVC.Areas.GV.Controllers
             //Lấy danh sách
             IQueryable<Sinhvien> dssv = null; ;
             var listtempsv = new List<Sinhvien>();
-            List<int> ds_masv = null;
+            List<string> ds_masv = null;
             ds_masv = db.LopTC_SV.Where(i => i.maloptc == id).Select(x => x.masv).ToList();
 
-            foreach (int ma1sv in ds_masv)
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                     listtempsv.Add(db.Sinhviens.Find(ma1sv));

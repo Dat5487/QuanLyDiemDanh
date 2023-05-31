@@ -14,7 +14,7 @@ namespace QLDD_MVC.Models
         public string hoten { get; set; }
 
         [DisplayName("Giới tính")]
-        public bool gioitinh { get; set; }
+        public string gioitinh { get; set; }
 
         [DisplayName("Số buổi điểm danh")]
         public int sobuoidd { get; set; }

@@ -34,8 +34,8 @@ namespace API.Controllers
             dd.CreateDiemdanh(maloptc, diadiem);
             int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
 
-            List<int> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
-            foreach (int ma1sv in ds_masv)
+            List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                 {
@@ -51,7 +51,7 @@ namespace API.Controllers
 
         //Nếu nhận diện sinh viên thành công thì sẽ cập nhật trạng thái diểm danh thành true
         [Route("PutTrangThaiDD")]
-        public IHttpActionResult PutTrangThaiDD(int masv,int maloptc)
+        public IHttpActionResult PutTrangThaiDD(string masv,int maloptc)
         {
             int madd;
             var now = DateTime.Now.Date;

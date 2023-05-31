@@ -23,7 +23,7 @@
             da1.Fill(ds, "Sinhvien");
         }
 
-        public void EditSinhvien(int masv, string EmbFace)
+        public void EditSinhvien(string masv, string EmbFace)
         {
             string query = String.Format("masv = {0}", masv);
             DataRow[] rows = ds.Tables["Sinhvien"].Select(query);
@@ -39,7 +39,7 @@
 
         [Key]
         [DisplayName("Mã sinh viên")]
-        public int masv { get; set; }
+        public string masv { get; set; }
 
         [StringLength(50, ErrorMessage = "Họ tên phải dưới 50 ký tự")]
         [Required(ErrorMessage = "Bắt buộc phải nhập họ tên")]
@@ -47,7 +47,7 @@
         public string hoten { get; set; }
 
         [DisplayName("Giới tính")]
-        public bool gioitinh { get; set; }
+        public string gioitinh { get; set; }
 
         [DisplayName("Mã lớp hành chính")]
         public int? malophc { get; set; }

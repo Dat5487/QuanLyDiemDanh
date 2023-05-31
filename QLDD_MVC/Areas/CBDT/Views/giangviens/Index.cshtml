@@ -61,14 +61,7 @@
                                     @Html.DisplayFor(modelItem => item.hoten)
                                 </td>
                                 <td>
-                                    @if (item.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
+                                    @Html.DisplayFor(modelItem => item.gioitinh)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.diachi)

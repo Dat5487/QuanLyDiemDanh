@@ -29,11 +29,11 @@ namespace QLDD_MVC.Areas.CBDT.Data
             else if (idtype == "LopTC")
             {
                 var listtempsv = new List<Sinhvien>();
-                List<int> ds_masv = null;
+                List<string> ds_masv = null;
 
                 ds_masv = db.LopTC_SV.Where(i => i.maloptc == id).Select(x => x.masv).ToList();
 
-                foreach (int ma1sv in ds_masv)
+                foreach (string ma1sv in ds_masv)
                 {
                     if (db.Sinhviens.Find(ma1sv) != null)
                     {
@@ -71,13 +71,13 @@ namespace QLDD_MVC.Areas.CBDT.Data
             return model;
         }
 
-        public IEnumerable<diemdanh> ListAllDiemDanhPaging(int? masv,int maloptc)
+        public IEnumerable<diemdanh> ListAllDiemDanhPaging(string masv,int maloptc)
         {
 
             //IQueryable<chitietdd> dsdd = null;
             var listtempdd = new List<diemdanh>();
 
-            List<int> ds_madd = db.chitietdds.Where(c => c.masv == masv).Select(x => x.madd).ToList();
+            List<int> ds_madd = db.chitietdds.Where(c => c.masv.Equals(masv)).Select(x => x.madd).ToList();
 
             foreach (int madd in ds_madd)
             {
@@ -99,7 +99,7 @@ namespace QLDD_MVC.Areas.CBDT.Data
 
         }
 
-        public IEnumerable<diemdanh> ListAllDiemDanhPaging2(int? masv)
+        public IEnumerable<diemdanh> ListAllDiemDanhPaging2(string masv)
         {
             IQueryable<diemdanh> chitietdd = null;
             List<int> ds_madd = null;
@@ -107,7 +107,7 @@ namespace QLDD_MVC.Areas.CBDT.Data
             //IQueryable<chitietdd> dsdd = null;
             var listtempdd = new List<diemdanh>();
 
-            ds_madd = db.chitietdds.Where(c => c.masv == masv).Select(x => x.madd).ToList();
+            ds_madd = db.chitietdds.Where(c => c.masv.Equals(masv)).Select(x => x.madd).ToList();
 
             foreach (int madd in ds_madd)
             {
