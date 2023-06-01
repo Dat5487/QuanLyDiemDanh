@@ -12,7 +12,11 @@ namespace QLDD_MVC.Areas.GV.Controllers
     {
         // GET: CBDT/Home
         private DataContextDB db = new DataContextDB();
-
+        public HomeController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         public ActionResult Index()
         {
             LoginController lg = new LoginController();

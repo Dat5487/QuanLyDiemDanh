@@ -17,10 +17,10 @@
         <div class="card-header py-3">
             <div class="row">
                 <div class="col-10">
-                    <h4 class="m-0 font-weight-bold text-primary">Danh sách các sinh viên trong hệ thống</h4>
+                    <h4 class="font-weight-bold text-primary">Danh sách các sinh viên trong hệ thống</h4>
                 </div>
-                <div class="float-end ">
-                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success" })
+                <div class="col-2">
+                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
                 </div>
             </div>
         </div>
@@ -53,16 +53,7 @@
                             <tr id="row_@item.masv">
                                 <td>@item.masv</td>
                                 <td>@item.hoten</td>
-                                <td>
-                                    @if (item.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
-                                </td>
+                                <td>@item.gioitinh</td>
                                 <td>
                                     @if (db.LopHCs.Find(item.malophc) != null)
                                     {

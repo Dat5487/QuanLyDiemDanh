@@ -29,11 +29,11 @@
                     @Html.LabelFor(model => model.gioitinh, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="radio1" name="gioitinh" value="True" checked>Nam
+                            <input type="radio" class="form-check-input" id="radio1" name="gioitinh" value="Nam" checked>Nam
                             <label class="form-check-label" for="radio1"></label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="radio2" name="gioitinh" value="False">Nữ
+                            <input type="radio" class="form-check-input" id="radio2" name="gioitinh" value="Nữ">Nữ
                             <label class="form-check-label" for="radio2"></label>
                         </div>
                         @Html.ValidationMessageFor(model => model.gioitinh, "", new { @class = "text-danger" })

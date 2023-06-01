@@ -12,13 +12,18 @@ using System.Drawing.Printing;
 using System.Web.UI;
 using System.Xml.Linq;
 using Microsoft.Ajax.Utilities;
+using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
     public class SinhviensController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
+        public SinhviensController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         // GET: CBDT/Sinhviens
         public ActionResult DsAllSinhVien()
         {
@@ -55,10 +60,10 @@ namespace QLDD_MVC.Areas.GV.Controllers
             //Lấy danh sách
             IQueryable<Sinhvien> dssv = null; ;
             var listtempsv = new List<Sinhvien>();
-            List<int> ds_masv = null;
+            List<string> ds_masv = null;
             ds_masv = db.LopTC_SV.Where(i => i.maloptc == id).Select(x => x.masv).ToList();
 
-            foreach (int ma1sv in ds_masv)
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                     listtempsv.Add(db.Sinhviens.Find(ma1sv));

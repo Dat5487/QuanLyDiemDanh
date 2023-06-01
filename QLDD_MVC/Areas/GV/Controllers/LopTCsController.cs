@@ -20,7 +20,11 @@ namespace QLDD_MVC.Areas.GV.Controllers
     public class LopTCsController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
+        public LopTCsController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         // GET: CBDT/LopTCs
         public ActionResult Index()
         {

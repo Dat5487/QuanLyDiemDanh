@@ -23,7 +23,11 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
     public class LopTCsController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
+        public LopTCsController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         // GET: CBDT/LopTCs
         public ActionResult Index()
         {
@@ -51,7 +55,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Index_LopTC","Sinhviens", new { id = id,root = root});
+            return RedirectToAction("Index_LopTC", "Sinhviens", new { id = id,root = root});
         }
 
         // GET: CBDT/LopTCs/Create
@@ -136,6 +140,20 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
         }
             // GET: CBDT/LopTCs/Delete/5
         public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            LopTC lopTC = db.LopTCs.Find(id);
+            if (lopTC == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(lopTC);
+        }
+        public ActionResult DeleteAllSV(int? id)
         {
             if (id == null)
             {

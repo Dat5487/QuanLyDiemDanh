@@ -16,7 +16,7 @@ GO
 CREATE TABLE [dbo].[chitietdd](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[madd] [int] NOT NULL,
-	[masv] [int] NOT NULL,
+	[masv] [nchar](9) NOT NULL,
 	[thoigiandd] [datetime] NOT NULL,
 	[trangthai] [bit] NULL,
 

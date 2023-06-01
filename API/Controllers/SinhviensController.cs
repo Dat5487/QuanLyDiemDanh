@@ -72,9 +72,9 @@ namespace API.Controllers
             IQueryable<ApiDSSVDiemdanh> dssv = null; ;
             var listtempsv = new List<ApiDSSVDiemdanh>();
             List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();
-            List<int> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
+            List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
 
-            foreach (int ma1sv in ds_masv)
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                 {
@@ -86,8 +86,8 @@ namespace API.Controllers
                     int sobuoidd = 0;
                     foreach (int madd in dsmadd)
                     {
-                        if (db.chitietdds.Where(x => x.madd == madd && x.masv == ma1sv).FirstOrDefault() != null)
-                            if (db.chitietdds.Where(x => x.madd == madd && x.masv == ma1sv).FirstOrDefault().trangthai == true)
+                        if (db.chitietdds.Where(x => x.madd == madd && x.masv.Equals(ma1sv)).FirstOrDefault() != null)
+                            if (db.chitietdds.Where(x => x.madd == madd && x.masv.Equals(ma1sv)).FirstOrDefault().trangthai == true)
                                 sobuoidd++;
                     }
                     svdd.sobuoidd = sobuoidd;
@@ -99,46 +99,14 @@ namespace API.Controllers
             return Ok(model);
         }
 
-        //DSSV X thongtindd
-        //Lấy thông tin điểm danh của 1 lớp trong 1 ngày được chọn
-        //[Route("GetdiemdanhByDate")]
-        //public IHttpActionResult GetdiemdanhByDate(int maloptc, DateTime date)
-        //{
-        //    date = date.Date;
-        //    var listtempsv = new List<ApiDSSVChitietdd>();
-        //    if (db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == date).FirstOrDefault() == null)
-        //        return BadRequest("Không có buổi học vào ngày này");
-        //    int madd = db.diemdanhs.Where(x=>x.maloptc == maloptc && x.ngaydd == date).FirstOrDefault().madd;
-        //    var ttddofdate = db.chitietdds.Where(x => x.madd == madd);
-        //    var ds_masv = ttddofdate.Select(x => x.masv).ToList();
-
-        //    foreach (int ma1sv in ds_masv)
-        //    {
-        //        if (db.Sinhviens.Find(ma1sv) != null)
-        //        {
-        //            ApiDSSVChitietdd svdd = new ApiDSSVChitietdd { };
-        //            var sv = db.Sinhviens.Find(ma1sv);
-        //            //Gán giá trị
-        //            svdd.hoten = sv.hoten;
-        //            svdd.gioitinh = sv.gioitinh;
-        //            svdd.thoigiandd = db.chitietdds.Where(x=>x.madd == madd && x.masv == sv.masv).FirstOrDefault().thoigiandd;
-        //            //svdd.tenlophc = db.LopHCs.Find(sv.malophc).tenlophc;
-        //            svdd.trangthai = ttddofdate.Where(x => x.masv == ma1sv).FirstOrDefault().trangthai;
-        //            listtempsv.Add(svdd);
-        //        }
-        //    }
-        //    IEnumerable<ApiDSSVChitietdd> ttdd = listtempsv.AsQueryable();
-        //    return Ok(ttdd);
-        //}
-
         [Route("UpdateSinhvien")]
 
         public IHttpActionResult UpdateSinhvien(UpdateModel updateModel)
         {
             Sinhvien sv = new Sinhvien();
-            if(db.Sinhviens.FirstOrDefault(x => x.masv == updateModel.masv) !=null)
+            if(db.Sinhviens.FirstOrDefault(x => x.masv.Equals(updateModel.masv)) !=null)
             {
-                sv = db.Sinhviens.FirstOrDefault(x => x.masv == updateModel.masv);
+                sv = db.Sinhviens.FirstOrDefault(x => x.masv.Equals(updateModel.masv));
             }
             else
             {

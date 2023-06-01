@@ -15,13 +15,13 @@
                 <div class="col-11">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
-                <div>
-                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger" })
+                <div class="col-1">
+                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger float-right" })
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="mt-2"><h4>Giáo viên chủ nhiệm : @ViewBag.tengv</h4></div>
+            <div><h5>Giảng viên chủ nhiệm : @ViewBag.tengv</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -47,16 +47,7 @@
                             <tr id="row_@item.masv">
                                 <td>@item.masv</td>
                                 <td>@item.hoten</td>
-                                <td>
-                                    @if (item.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
-                                </td>
+                                <td>@item.gioitinh</td>
                                 <td>@item.khoa</td>
                                 <td>
                                     @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv }, new { @class = "btn btn-primary" })

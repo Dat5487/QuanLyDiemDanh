@@ -28,7 +28,7 @@
             DataRow r = ds.Tables["giangvien"].NewRow();
             r["username"] = username;
             r["hoten"] = hoten;
-            r["gioitinh"] = true;
+            r["gioitinh"] = "Nam";
 
             ds.Tables["giangvien"].Rows.Add(r);
             da1.Update(ds, "giangvien");
@@ -59,7 +59,7 @@
 
         [Required]
         [DisplayName("Giới tính")]
-        public bool gioitinh { get; set; }
+        public string gioitinh { get; set; }
 
         [StringLength(50)]
         [DisplayName("Địa chỉ")]

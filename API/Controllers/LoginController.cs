@@ -40,20 +40,23 @@ namespace API.Controllers
                     if (db.giangviens.Where(x => x.username == username).FirstOrDefault() == null)
                         return BadRequest("Giảng viên có tên đăng nhập này không có trong danh sách giảng viên, hãy liên hệ với CBĐT để thêm giảng viên");
 
-                    IQueryable<LopTC> model = null;
-                    var listtemploptc = new List<LopTC>();
+                    IQueryable<ApiLopTC> model = null;
+                    var listtemploptc = new List<ApiLopTC>();
                     List<int> ds_maloptc = null;
                     ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
                     foreach (int ma1loptc in ds_maloptc)
                     {
-                        //if (db.Sinhviens.Find(ma1loptc) != null)
-                            listtemploptc.Add(db.LopTCs.Find(ma1loptc));
+                        var temp = db.LopTCs.Find(ma1loptc);
+                        ApiLopTC loptc = new ApiLopTC();
+                        loptc.maloptc = temp.maloptc;
+                        loptc.magv = temp.magv;
+                        loptc.mahp = temp.mahp;
+                        loptc.tenltc = temp.tenltc;
+                        loptc.trangthai = temp.trangthai;
+                        loptc.tenhp = db.Hocphans.Find(temp.mahp).tenhp;
+                        listtemploptc.Add(loptc);
                     }
-
                     model = listtemploptc.AsQueryable();
-                    //if (model == null)
-                    //    return BadRequest("Bạn không có lớp tín chỉ nào");
-
                     return Ok(model);
                 }
 

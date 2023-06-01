@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QLDD_MVC.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,11 @@ namespace QLDD_MVC.Areas.GV.Controllers
         {
             ViewData["error"] = error;
             return View();
+        }
+        public ErrorController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
         }
     }
 }

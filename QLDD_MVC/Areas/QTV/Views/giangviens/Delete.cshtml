@@ -25,14 +25,8 @@
                 </dt>
 
                 <dd>
-                    @if (Model.gioitinh == true)
-                    {
-                        <text>Nam</text>
-                    }
-                    else
-                    {
-                        <text>Nữ</text>
-                    }
+                    @Html.DisplayFor(model => model.gioitinh)
+
                 </dd>
 
                 <dt>

@@ -15,24 +15,56 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-10">
+                <div class="col-8">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
-                <div class="float-end ">
-                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success" })
+                <div class="col-4 ">
                     @if (ViewBag.root == "DsLopHC")
                     {
-                        @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
                     }
                     else if (ViewBag.root == "DsLopHCofGV")
                     {
-                        @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { }, new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
                     }
+
+                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
+
+                    <button type="button" class="btn btn-primary float-right mx-1" data-toggle="modal" data-target="#myModal">
+                        <i class="fa fa-plus-circle"></i> Nhập File Excel
+                    </button>
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Nhập File Excel</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <form method="post" enctype="multipart/form-data">
+                                                <div class="d-flex justify-content-center">
+                                                    <input name="file" type="file" required />
+                                                    <input value=@ViewBag.malophc name="malophc" class=" form-control" hidden />
+                                                    <button class="btn btn-success" type="submit">Nhập</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="mt-2"><h4>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h4></div>
+            <div ><h5>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -58,17 +90,13 @@
                             <tr id="row_@item.masv">
                                 <td>@item.masv</td>
                                 <td>@item.hoten</td>
+                                <td>@item.gioitinh</td>
                                 <td>
-                                    @if (item.gioitinh == true)
+                                    @if (item.khoa != null)
                                     {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
+                                        @item.khoa
                                     }
                                 </td>
-                                <td>@item.khoa</td>
                                 <td>
                                     @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv, root = "DsSVLopHC" }, new { @class = "btn btn-primary" })
                                     @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.masv }, new { @class = "btn btn-warning" })

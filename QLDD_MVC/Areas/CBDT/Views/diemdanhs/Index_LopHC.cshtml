@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QLDD_MVC.Models.chitietdd>
+﻿@model IEnumerable<QLDD_MVC.Models.LopTC>
 
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
@@ -17,15 +17,17 @@
                 <div class="col-11">
                     <h4 class="m-0 font-weight-bold text-primary">Thông tin điểm danh của sinh viên @ViewBag.hoten</h4>
                 </div>
-                <div class="float-end ">
-                    @if (ViewBag.root == "DsAllSV")
-                    {
-                        @Html.ActionLink("Quay lại", "DsAllSinhVien", "Sinhviens", new { }, new { @class = "btn btn-danger" })
-                    }
-                    else if (ViewBag.root == "DsSVLopHC")
-                    {
-                        @Html.ActionLink("Quay lại", "Index", "Sinhviens", new { id=ViewBag.malophc, root="DsLopHC" }, new { @class = "btn btn-danger" })
-                    }
+                <div class="col-1">
+                    @*@if (ViewBag.root == "DsAllSV")
+                        {
+                            @Html.ActionLink("Quay lại", "DsAllSinhVien", "Sinhviens", new { }, new { @class = "btn btn-danger" })
+                        }
+                        else if (ViewBag.root == "DsSVLopHC")
+                        {
+                            @Html.ActionLink("Quay lại", "Index", "Sinhviens", new { id = ViewBag.malophc, root = "DsLopHC" }, new { @class = "btn btn-danger" })
+                        }*@
+                    <a class="btn btn-danger float-right" href="##" onClick="history.go(-1); return false;">Quay lại</a>
+
                 </div>
             </div>
         </div>
@@ -40,60 +42,68 @@
                         Giới tính
                     </th>
                     <th>
-                        Tên lớp hành chính
-                    </th>
-                    <th>
                         Lớp tín chỉ
                     </th>
                     <th>
                         Tên học phần
                     </th>
                     <th>
-                        Thời gian điểm danh
+                        Số buổi có mặt
                     </th>
                     <th>
-                        Trạng thái
+                        Số buổi vắng
                     </th>
-                    </thead>
+                    <th>
+                        Thao tác
+                    </th>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            int? maloptc = db.diemdanhs.Find(item.madd).maloptc;
-
-                            <tr id="row_@item.id">
+                            string masv = ViewBag.masv;
+                            <tr id="row_@item.maloptc">
                                 <td>@ViewBag.hoten</td>
                                 <td>
-                                    @if (ViewBag.gioitinh == true)
-                                    {
-                                        <text>Nam</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Nữ</text>
-                                    }
+                                    @ViewBag.gioitinh
+                                    @*@if (ViewBag.gioitinh == "Nam")
+                                        {
+                                            <text>Nam</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Nữ</text>
+                                        }*@
                                 </td>
-                                <td>@ViewBag.tenlophc</td>
-                                <td>@db.LopTCs.Find(maloptc).tenltc</td>
+                                <td>@db.LopTCs.Find(item.maloptc).tenltc</td>
                                 <td>
-                                    @if (db.Hocphans.Find(db.LopTCs.Find(maloptc).mahp) != null)
+                                    @if (db.Hocphans.Find(db.LopTCs.Find(item.maloptc).mahp) != null)
                                     {
-                                        @db.Hocphans.Find(db.LopTCs.Find(maloptc).mahp).tenhp;
+                                        @db.Hocphans.Find(db.LopTCs.Find(item.maloptc).mahp).tenhp;
                                     }
                                     else
                                     {
                                         <text>Mã Hp không tồn tại</text>
                                     }
                                 </td>
-                                <td>@item.thoigiandd</td>
                                 <td>
-                                    @if (item.trangthai == true)
-                                    {
-                                        <text>Có mặt</text>
+                                    @{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == item.maloptc).Select(x => x.madd).ToList();
+                                        int sobuoidd = 0; int sobuoivang = 0;
+                                        foreach (int madd in dsmadd)
+                                        {
+                                            if (db.chitietdds.FirstOrDefault(x => x.madd == madd && x.masv.Equals(masv)).trangthai == true)
+                                            {
+                                                sobuoidd++;
+                                            }
+                                            else
+                                            {
+                                                sobuoivang++;
+                                            }
+                                        }
                                     }
-                                    else
-                                    {
-                                        <text>Vắng</text>
-                                    }
+                                    @sobuoidd
+                                </td>
+                                <td>@sobuoivang</td>
+                                <td>
+                                    @Html.ActionLink("Xem thông tin điểm danh", "DDInfoOfSV_LopTC", new { maloptc = item.maloptc, masv = masv }, new { @class = "btn btn-success" })
                                 </td>
                             </tr>
                         }

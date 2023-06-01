@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Mvc;
@@ -34,8 +35,8 @@ namespace API.Controllers
             dd.CreateDiemdanh(maloptc, diadiem);
             int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
 
-            List<int> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
-            foreach (int ma1sv in ds_masv)
+            List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
+            foreach (string ma1sv in ds_masv)
             {
                 if (db.Sinhviens.Find(ma1sv) != null)
                 {
@@ -45,13 +46,27 @@ namespace API.Controllers
                     ttdd.CreateChitietdd(madd, ma1sv);
                 }
             }
-
+            return Ok();
+        }
+        [Route("XoaHdDD")]
+        public IHttpActionResult HuyHdDD(int maloptc)
+        {
+            var now = DateTime.Now.Date;
+            if(db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault() == null)
+            {
+                return BadRequest("Lớp này chưa tạo điểm danh");
+            }
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            diemdanh dd = new diemdanh();
+            dd.DeleteHDDiemdanh(maloptc);
+            chitietdd ttdd = new chitietdd();
+            ttdd.DeleteHDChitietDD(madd);
             return Ok();
         }
 
         //Nếu nhận diện sinh viên thành công thì sẽ cập nhật trạng thái diểm danh thành true
         [Route("PutTrangThaiDD")]
-        public IHttpActionResult PutTrangThaiDD(int masv,int maloptc)
+        public IHttpActionResult PutTrangThaiDD(string masv,int maloptc)
         {
             int madd;
             var now = DateTime.Now.Date;
@@ -83,6 +98,15 @@ namespace API.Controllers
 
             return Ok(dsngay);
         }
+
+        //public IHttpActionResult DDStatus(int maloptc)
+        //{
+        //    if (db.diemdanhs.Find(maloptc).diadiem == "true")
+        //        return Ok(true);
+        //    else
+        //        return Ok(false);
+        //}
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
