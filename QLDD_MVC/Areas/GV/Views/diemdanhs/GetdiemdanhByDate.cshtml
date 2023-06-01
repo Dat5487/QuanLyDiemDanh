@@ -38,7 +38,7 @@
                                 {
                                     foreach (int madd in dsmadd)
                                     {
-                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("yyyy-MM-dd"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
                                     }
                                 }
                             }
@@ -54,6 +54,9 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                     <th>
+                        Mã sinh viên
+                    </th>
+                    <th>
                         Họ và tên
                     </th>
                     <th>
@@ -61,9 +64,6 @@
                     </th>
                     <th>
                         Tên lớp hành chính
-                    </th>
-                    <th>
-                        Khoa
                     </th>
                     <th>
                         Thời gian điểm danh
@@ -76,11 +76,11 @@
                         @foreach (var item in Model)
                         {
                             <tr id="row_@item.masv">
+                                <td>@item.masv</td>
                                 <td>@item.hoten</td>
                                 <td>@item.gioitinh</td>
                                 <td>@item.tenlophc</td>
-                                <td>@item.khoa</td>
-                                <td>@item.thoigiandd</td>
+                                <td>@item.thoigiandd.ToString("dd-MM-yyyy HH:mm:ss")</td>
                                 <td>
                                     @if (item.trangthai == true)
                                     {

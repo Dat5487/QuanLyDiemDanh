@@ -19,11 +19,41 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-8">
+                <div class="col-5">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp tín chỉ : @ViewBag.tentc</h4>
                 </div>
-                <div class="float-end ml-4">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                <div class="col-7">
+                    @if (ViewBag.root == "DsLopTC")
+                    {
+                        @Html.ActionLink("Quay lại", "Index", "LopTCs", new { }, new { @class = "btn btn-danger float-right ml-1" })
+                    }
+                    else if (ViewBag.root == "DsLopTCofGV")
+                    {
+                        @Html.ActionLink("Quay lại", "ListLopTCofGV", "LopTCs", new { }, new { @class = "btn btn-danger float-right ml-1" })
+                    }
+                    <div class="dropdown show float-right">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Thông tin điểm danh theo ngày
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            @{
+                                if (dsmadd.Count() == 0)
+                                {
+                                    <h6 class="px-2">Lớp chưa có hoạt động điểm danh</h6>
+                                }
+                                else
+                                {
+                                    foreach (int madd in dsmadd)
+                                    {
+                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                    @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { id = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success float-right mx-1" })
+
+                    <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">
                         <i class="fa fa-plus-circle"></i> Nhập File Excel
                     </button>
                     <div class="modal fade" id="myModal">
@@ -52,44 +82,12 @@
                             </div>
                         </div>
                     </div>
-                    @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { id = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success" })
                 </div>
-                <div class="dropdown show px-1">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Thông tin điểm danh theo ngày
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        @{
-                            if (dsmadd.Count() == 0)
-                            {
-                                <h6 class="px-2">Lớp chưa có hoạt động điểm danh</h6>
-                            }
-                            else
-                            {
-                                foreach (int madd in dsmadd)
-                                {
-                                    @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("yyyy-MM-dd"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
-                                }
-                            }
-                        }
-                    </div>
-                </div>
-                @if (ViewBag.root == "DsLopTC")
-                {
-                    @Html.ActionLink("Quay lại", "Index", "LopTCs", new { }, new { @class = "btn btn-danger" })
-                }
-                else if (ViewBag.root == "DsLopTCofGV")
-                {
-                    @Html.ActionLink("Quay lại", "ListLopTCofGV", "LopTCs", new { }, new { @class = "btn btn-danger" })
-                }
             </div>
-
         </div>
         <div class="card-body">
-
-            <div class="mt-1"><h4>Họ tên giáo viên lớp tín chỉ : @ViewBag.tengv</h4></div>
-            <div class="mt-1"><h4>Tổng số buổi đã điểm danh : @sobuoidadd</h4></div>
-
+            <div><h5>Họ tên giáo viên lớp tín chỉ : @ViewBag.tengv</h5></div>
+            <div><h5>Tổng số buổi đã điểm danh : @sobuoidadd</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>

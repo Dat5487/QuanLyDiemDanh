@@ -44,6 +44,19 @@
             da1.Update(ds, "chitietdd");
             ds.AcceptChanges();
         }
+
+        public void DeleteHDChitietDD(int madd)
+        {
+            string query = String.Format("madd = {0}", madd);
+            DataRow[] rows = ds.Tables["chitietdd"].Select(query);
+            try
+            {
+                rows[0].Delete();
+            }
+            catch (Exception ex) { }
+            da1.Update(ds, "chitietdd");
+            ds.AcceptChanges();
+        }
         public void EditChitietdd(int madd, string masv)
         {
             var now = DateTime.Now.Date;

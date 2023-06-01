@@ -21,6 +21,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Web.UI;
 using System.Data.Common;
+using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
@@ -29,7 +30,11 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
         private DataContextDB db = new DataContextDB();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DataContextDB"].ConnectionString);
         OleDbConnection Econ;
-
+        public SinhviensController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         // GET: CBDT/Sinhviens
         public ActionResult DsAllSinhVien()
         {
@@ -116,6 +121,13 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             else if (InsertExceldataToLopTC(filepath, filename, maloptc) == 2)
             {
                 return RedirectToAction("Index", "Error", new { error = "Bảng trong File Excel không đúng quy định" });
+            }
+            var dsmasv = db.LopTC_SV.Where(x => x.maloptc == maloptc).Select(x => x.masv);
+            LopTC_SV sv = new LopTC_SV();
+            foreach (string masv in dsmasv)
+            {
+                if (db.Sinhviens.Find(masv) == null)
+                    sv.DeleteLopTC_SV(maloptc, masv);
             }
             return RedirectToAction("Index_LopTC", new { id = maloptc, root= "DsLopTC" });
         }

@@ -44,6 +44,16 @@
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
+
+        public void DeleteHDDiemdanh(int? maloptc)
+        {
+            string query = String.Format("maloptc = {0} AND ngaydd = '{1}'", maloptc,DateTime.Now.Date);
+            DataRow[] rows = ds.Tables["diemdanh"].Select(query);
+            rows[0].Delete();
+            da1.Update(ds, "diemdanh");
+            ds.AcceptChanges();
+        }
+
         [Key]
         [DisplayName("Mã điểm danh")]
         public int madd { get; set; }

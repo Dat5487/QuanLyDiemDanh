@@ -37,6 +37,8 @@
             }
         }
 
+
+
         [Key]
         [DisplayName("Mã sinh viên")]
         public string masv { get; set; }

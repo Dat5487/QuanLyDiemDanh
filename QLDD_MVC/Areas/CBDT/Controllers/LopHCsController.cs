@@ -23,6 +23,11 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
         private DataContextDB db = new DataContextDB();
 
         // GET: CBDT/LopHCs
+        public LopHCsController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         public ActionResult Index()
         {
             var dao = new ListAllPaging();

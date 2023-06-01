@@ -10,21 +10,38 @@ using System.Web.Mvc;
 using System.Web.UI;
 using QLDD_MVC.Models;
 using System.Diagnostics;
+using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
     public class diemdanhsController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
-        public ActionResult Index_LopHC(string masv)
+        public diemdanhsController()
         {
-            var model = db.chitietdds.Where(x => x.masv.Equals(masv));
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
+        public ActionResult Index_LopHC(string masv, string root)
+        {
+            var listtemploptc = new List<LopTC>();
+            List<int> dsmaloptc = db.LopTC_SV.Where(x => x.masv == masv).Select(x => x.maloptc).ToList();
+            foreach (int ma1loptc in dsmaloptc)
+            {
+                if (db.LopTCs.Find(ma1loptc) != null)
+                {
+                    listtemploptc.Add(db.LopTCs.Find(ma1loptc));
+                }
+            }
+
+            IEnumerable<LopTC> model = listtemploptc.AsQueryable();
+            ViewData["masv"] = masv;
             ViewData["hoten"] = db.Sinhviens.Find(masv).hoten;
             ViewData["gioitinh"] = db.Sinhviens.Find(masv).gioitinh;
             ViewData["tenlophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).tenlophc;
-            ViewData["khoa"] = db.Sinhviens.Find(masv).khoa;
             ViewData["malophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).malophc;
+            ViewData["root"] = root;
+
             return View(model);
         }
         public ActionResult GetdiemdanhByDate(int maloptc, DateTime date)
@@ -58,6 +75,25 @@ namespace QLDD_MVC.Areas.GV.Controllers
             ViewData["ngaydd"] = date.ToString("dd/MM/yyyy");
 
             return View(ttdd);
+        }
+
+        public ActionResult DDInfoOfSV_LopTC(int? maloptc, string masv)
+        {
+            List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();
+            var dsttdd = new List<chitietdd>();
+            foreach (int madd in dsmadd)
+            {
+                dsttdd.Add(db.chitietdds.FirstOrDefault(x => x.masv.Equals(masv) && x.madd == madd));
+            }
+            IEnumerable<chitietdd> model = dsttdd.AsQueryable();
+            ViewData["hoten"] = db.Sinhviens.Find(masv).hoten;
+            ViewData["gioitinh"] = db.Sinhviens.Find(masv).gioitinh;
+            ViewData["tenlophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).tenlophc;
+            ViewData["malophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).malophc;
+            ViewData["khoa"] = db.Sinhviens.Find(masv).khoa;
+            ViewData["tenloptc"] = db.LopTCs.Find(maloptc).tenltc;
+
+            return View(model);
         }
 
         protected override void Dispose(bool disposing)

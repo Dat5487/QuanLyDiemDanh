@@ -15,10 +15,10 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-9">
+                <div class="col-8">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
-                <div class="col-3 ">
+                <div class="col-4 ">
                     @if (ViewBag.root == "DsLopHC")
                     {
                         @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="mt-2"><h4>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h4></div>
+            <div ><h5>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>

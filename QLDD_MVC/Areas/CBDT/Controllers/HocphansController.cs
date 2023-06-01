@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using QLDD_MVC.Controllers;
 using QLDD_MVC.Models;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
@@ -13,6 +14,12 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
     public class HocphansController : Controller
     {
         private DataContextDB db = new DataContextDB();
+
+        public HocphansController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
 
         // GET: CBDT/Hocphans
         public ActionResult Index()

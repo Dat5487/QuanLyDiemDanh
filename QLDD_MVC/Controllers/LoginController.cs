@@ -13,6 +13,7 @@ namespace QLDD_MVC.Controllers
     public class LoginController : Controller
     {
         // GET: QTV/Login
+        public static string hotengv;
         public ActionResult Index()
         {
             return View();
@@ -40,6 +41,7 @@ namespace QLDD_MVC.Controllers
                         return RedirectToAction("Index", "ErrorM", new { error = "Tên đăng nhập này chưa được gán cho giảng viên nào" });
 
                     magv = db.giangviens.Where(x => x.username == username).FirstOrDefault().magv;
+                    hotengv = db.giangviens.Find(magv).hoten;
                     if (phanquyen.TrimEnd() == "Cán bộ đào tạo")
                         return RedirectToAction("Index", "Home", new { area = "CBDT" });
                     if (db.giangviens.Where(x => x.username == username).FirstOrDefault() == null)
@@ -75,6 +77,10 @@ namespace QLDD_MVC.Controllers
         public int Getmagv()
         {
             return magv;
+        }
+        public string Gethotengv()
+        {
+            return hotengv;
         }
     }
 }

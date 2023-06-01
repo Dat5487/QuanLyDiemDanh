@@ -15,6 +15,12 @@ namespace QLDD_MVC.Areas.GV.Controllers
     {
         private DataContextDB db = new DataContextDB();
 
+        public LopHCsController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
+
         // GET: CBDT/LopHCs
         public ActionResult Index()
         {

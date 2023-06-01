@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Mvc;
@@ -45,7 +46,21 @@ namespace API.Controllers
                     ttdd.CreateChitietdd(madd, ma1sv);
                 }
             }
-
+            return Ok();
+        }
+        [Route("XoaHdDD")]
+        public IHttpActionResult HuyHdDD(int maloptc)
+        {
+            var now = DateTime.Now.Date;
+            if(db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault() == null)
+            {
+                return BadRequest("Lớp này chưa tạo điểm danh");
+            }
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            diemdanh dd = new diemdanh();
+            dd.DeleteHDDiemdanh(maloptc);
+            chitietdd ttdd = new chitietdd();
+            ttdd.DeleteHDChitietDD(madd);
             return Ok();
         }
 
@@ -83,6 +98,15 @@ namespace API.Controllers
 
             return Ok(dsngay);
         }
+
+        //public IHttpActionResult DDStatus(int maloptc)
+        //{
+        //    if (db.diemdanhs.Find(maloptc).diadiem == "true")
+        //        return Ok(true);
+        //    else
+        //        return Ok(false);
+        //}
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

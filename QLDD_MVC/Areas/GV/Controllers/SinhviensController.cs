@@ -12,13 +12,18 @@ using System.Drawing.Printing;
 using System.Web.UI;
 using System.Xml.Linq;
 using Microsoft.Ajax.Utilities;
+using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
     public class SinhviensController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
+        public SinhviensController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         // GET: CBDT/Sinhviens
         public ActionResult DsAllSinhVien()
         {

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using QLDD_MVC.Areas.CBDT.Data;
+using QLDD_MVC.Controllers;
 using QLDD_MVC.Models;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
@@ -16,7 +17,11 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
         private DataContextDB db = new DataContextDB();
 
         // GET: CBDT/giangviens
-
+        public giangviensController()
+        {
+            LoginController lg = new LoginController();
+            ViewBag.hotengv = lg.Gethotengv();
+        }
         public ActionResult Index()
         {
             var dao = new ListAllPaging();

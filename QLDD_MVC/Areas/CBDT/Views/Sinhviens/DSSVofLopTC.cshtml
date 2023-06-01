@@ -18,10 +18,10 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-9">
+                <div class="col-6">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp tín chỉ : @ViewBag.tenltc</h4>
                 </div>
-                <div class="col-3">
+                <div class="col-6">
                     @Html.ActionLink("Quay lại", "ListLopTCofGV", "LopTCs", new { id = ViewBag.maloptc }, new { @class = "btn btn-danger float-right" })
 
                     <div class="dropdown show px-1 float-right">
@@ -48,8 +48,8 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="mt-1"><h4>Giáo viên lớp tín chỉ : @ViewBag.tengv</h4></div>
-            <div class="mt-1"><h4>Tổng số buổi đã điểm danh : @sobuoidadd</h4></div>
+            <div class=""><h5>Giáo viên lớp tín chỉ : @ViewBag.tengv</h5></div>
+            <div class=""><h5>Tổng số buổi đã điểm danh : @sobuoidadd</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
