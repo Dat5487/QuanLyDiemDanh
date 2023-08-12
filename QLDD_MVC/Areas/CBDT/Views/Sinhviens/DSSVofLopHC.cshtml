@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Danh sách sinh viên trong lớp hành chính : " + ViewBag.tenlophc;
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 
 }
@@ -16,7 +16,7 @@
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
                 <div class="col-1">
-                    @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new {id = ViewBag.malophc }, new { @class = "btn btn-danger float-right" })
+                    @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { malophc = ViewBag.malophc }, new { @class = "btn btn-danger float-right" })
                 </div>
             </div>
         </div>
@@ -60,3 +60,42 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                stateSave: true,
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }, {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }
+                ]
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

@@ -20,47 +20,52 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class LopTCsController : Controller
+    [Authorize]
+
+    public class LopTCsController : BaseController
     {
         private DataContextDB db = new DataContextDB();
-        public LopTCsController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-        // GET: CBDT/LopTCs
+        LopTC loptc = new LopTC();
+
         public ActionResult Index()
         {
             var dao = new Data.ListAllPaging();
             var model = dao.ListAllLopTCPaging();
+            SetHotengv();
             return View(model);
         }
         public ActionResult ListLopTCofGV()
         {
-            LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
+
+            TempData.Keep("magv");
             var dao = new Data.ListAllPaging();
             var model = dao.ListAllLopTCofGVPaging(magv);
+            SetHotengv();
             return View(model);
         }
-        // GET: CBDT/LopTCs/Details/5
-        public ActionResult Details(int? id,string root)
+        public ActionResult Details(string maloptc,string root)
         {
-            if (id == null)
+            if (maloptc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopTC lopTC = db.LopTCs.Find(id);
+            LopTC lopTC = db.LopTCs.Find(maloptc);
             if (lopTC == null)
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Index_LopTC", "Sinhviens", new { id = id,root = root});
+            return RedirectToAction("Index_LopTC", "Sinhviens", new { maloptc = maloptc, root = root});
         }
 
         // GET: CBDT/LopTCs/Create
         public ActionResult Create()
         {
+            ViewBag.HP = db.Hocphans.ToList();
+            ViewBag.GV = db.giangviens.ToList();
+            SetHotengv();
             return View();
         }
 
@@ -85,31 +90,35 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 if (db.Hocphans.Find(lopTC.mahp) == null)
                     return RedirectToAction("Index", "Error", new { error = "Mã học phần không tồn tại trong hệ thống" });
                 //Phải tạo lớp TC mới thì mới tìm được maloptc tự tạo
-                db.LopTCs.Add(lopTC);
-                db.SaveChanges();
-                LopTC loptc = new LopTC();
+                loptc.CreateLopTC(lopTC.mahp, lopTC.magv, lopTC.sttlop, lopTC.trangthai);
                 loptc.EditTenLopTC(lopTC.maloptc, lopTC.mahp,lopTC.sttlop);
                 //Tạo bản ghi mới cho GVTC
                 GVTC gvtc = new GVTC();
-                gvtc.CreateGVTC(gv.magv, lopTC.maloptc, gv.username);
+                string maloptcmoitao = db.LopTCs.OrderByDescending(x => x.maloptc).FirstOrDefault().maloptc;
+                gvtc.CreateGVTC(gv.magv, maloptcmoitao, gv.username);
+                SetAlert("Thêm lớp tín chỉ thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(lopTC);
         }
 
         // GET: CBDT/LopTCs/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string maloptc)
         {
-            if (id == null)
+            ViewBag.HP = db.Hocphans.ToList();
+            ViewBag.GV = db.giangviens.ToList();
+            if (maloptc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopTC lopTC = db.LopTCs.Find(id);
+            LopTC lopTC = db.LopTCs.Find(maloptc);
             if (lopTC == null)
             {
                 return HttpNotFound();
             }
             ViewData["magv"] = lopTC.magv;
+            SetHotengv();
             return View(lopTC);
         }
 
@@ -127,62 +136,61 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 if (db.Hocphans.Find(lopTC.mahp) == null)
                     return RedirectToAction("Index", "Error", new { error = "Mã học phần không tồn tại trong hệ thống" });
 
-                db.Entry(lopTC).State = EntityState.Modified;
-                db.SaveChanges();
+                loptc.EditLopTC(lopTC.maloptc,lopTC.mahp, lopTC.magv, lopTC.sttlop, lopTC.trangthai);
                 GVTC gvtc = new GVTC();
                 gvtc.EditGVTC(gv.magv, lopTC.maloptc, gv.username);
-                LopTC loptc = new LopTC();
                 loptc.EditTenLopTC(lopTC.maloptc, lopTC.mahp, lopTC.sttlop);
-
+                SetAlert("Chỉnh sửa lớp tín chỉ thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(lopTC);
         }
             // GET: CBDT/LopTCs/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string maloptc)
         {
-            if (id == null)
+            if (maloptc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopTC lopTC = db.LopTCs.Find(id);
+            LopTC lopTC = db.LopTCs.Find(maloptc);
             if (lopTC == null)
             {
                 return HttpNotFound();
             }
-
+            SetHotengv();
             return View(lopTC);
         }
-        public ActionResult DeleteAllSV(int? id)
+        public ActionResult DeleteAllSV(string maloptc)
         {
-            if (id == null)
+            if (maloptc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopTC lopTC = db.LopTCs.Find(id);
+            LopTC lopTC = db.LopTCs.Find(maloptc);
             if (lopTC == null)
             {
                 return HttpNotFound();
             }
-
+            SetHotengv();
             return View(lopTC);
         }
 
         // POST: CBDT/LopTCs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int? id)
+        public ActionResult DeleteConfirmed(string maloptc)
         {
-            LopTC lopTC = db.LopTCs.Find(id); 
+            LopTC lopTC = db.LopTCs.Find(maloptc); 
             giangvien gv = db.giangviens.Find(lopTC.magv);
             //Lấy danh sách mã sinh viên có cùng maloptc
-            var dsmasv = db.LopTC_SV.Where(x => x.maloptc == id);
+            var dsmasv = db.LopTC_SV.Where(x => x.maloptc == maloptc);
 
             //Nếu lớp tc đã tạo hoạt động điểm danh thì xóa dd
-            if (db.diemdanhs.Where(x => x.maloptc == id).FirstOrDefault() != null)
+            if (db.diemdanhs.Where(x => x.maloptc == maloptc).FirstOrDefault() != null)
             {
                 //Tìm madd
-                int madd = db.diemdanhs.Where(x => x.maloptc == id).FirstOrDefault().madd;
+                int madd = db.diemdanhs.Where(x => x.maloptc == maloptc).FirstOrDefault().madd;
                 //Xóa từng sv khỏi bảng chitietdd va LopTC_SV
                 chitietdd ctdd = new chitietdd();
                 foreach (LopTC_SV sv in dsmasv)
@@ -191,14 +199,14 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 }
                 //Xóa bản ghi ở bảng diemdanh
                 diemdanh dd = new diemdanh();
-                dd.DeleteDiemdanh(id);
+                dd.DeleteDiemdanh(maloptc);
             }
 
             //Xóa từng sv khỏi bảng LopTC_SV
             LopTC_SV loptc_sv = new LopTC_SV();
             foreach (LopTC_SV sv in dsmasv)
             {
-                loptc_sv.DeleteLopTC_SV(id, sv.masv);
+                loptc_sv.DeleteLopTC_SV(maloptc, sv.masv);
             }
             //Xóa bản ghi ở bảng GVTC
             GVTC gvtc = new GVTC();
@@ -206,7 +214,17 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             //Xóa bản ghi ở bảng LopTC
             db.LopTCs.Remove(lopTC);
             db.SaveChanges();
+            SetAlert("Xóa lớp tín chỉ thành công", "success");
             return RedirectToAction("Index");
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
 
         protected override void Dispose(bool disposing)
@@ -217,8 +235,5 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
             base.Dispose(disposing);
         }
-
-
-
     }
 }

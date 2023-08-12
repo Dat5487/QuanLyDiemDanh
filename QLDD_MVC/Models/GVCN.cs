@@ -22,7 +22,7 @@ namespace QLDD_MVC.Models
             da1.Fill(ds, "GVCN");
         }
 
-        public void CreateGVCN(int magv, int malophc,string username)
+        public void CreateGVCN(string magv, string malophc,string username)
         {
             DataRow r = ds.Tables["GVCN"].NewRow();
             r["malophc"] = malophc;
@@ -33,18 +33,18 @@ namespace QLDD_MVC.Models
             ds.AcceptChanges();
         }
 
-        public void DeleteGVCN(int magv, int malophc)
+        public void DeleteGVCN(string magv, string malophc)
         {
-            string query = String.Format("magv = {0} AND malophc = {1}", magv, malophc);
+            string query = String.Format("magv = '{0}' AND malophc = '{1}'", magv, malophc);
             DataRow[] rows = ds.Tables["GVCN"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "GVCN");
             ds.AcceptChanges();
         }
 
-        public void EditGVCN(int magv, int malophc, string username)
+        public void EditGVCN(string magv, string malophc, string username)
         {
-            string query = String.Format("malophc = {0}", malophc);
+            string query = String.Format("malophc = '{0}'", malophc);
             DataRow[] rows = ds.Tables["GVCN"].Select(query);
             if (rows.Length > 0)
             {
@@ -59,9 +59,9 @@ namespace QLDD_MVC.Models
         }
         public int id { get; set; }
 
-        public int? magv { get; set; }
+        public string magv { get; set; }
 
-        public int? malophc { get; set; }
+        public string malophc { get; set; }
         public string username { get; set; }
 
     }

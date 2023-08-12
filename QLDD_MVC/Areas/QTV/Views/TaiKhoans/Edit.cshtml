@@ -42,7 +42,7 @@
                                     <label class="form-check-label" for="radio1"></label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo">Cán bộ đào tạo
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ quản lý đào tạo">Cán bộ quản lý đào tạo
                                     <label class="form-check-label" for="radio2"></label>
                                 </div>
                                 <div class="form-check">
@@ -50,14 +50,14 @@
                                     <label class="form-check-label" for="radi3"></label>
                                 </div>
                             }
-                            else if (Model.phanquyen == "Cán bộ đào tạo")
+                            else if (Model.phanquyen == "Cán bộ quản lý đào tạo")
                             {
                                 <div class="form-check">
                                     <input type="radio" class="form-check-input" id="radio1" name="phanquyen" value="Quản trị viên">Quản trị viên
                                     <label class="form-check-label" for="radio1"></label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo" checked>Cán bộ đào tạo
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ quản lý đào tạo" checked>Cán bộ quản lý đào tạo
                                     <label class="form-check-label" for="radio2"></label>
                                 </div>
                                 <div class="form-check">
@@ -72,7 +72,7 @@
                                     <label class="form-check-label" for="radio1"></label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ đào tạo">Cán bộ đào tạo
+                                    <input type="radio" class="form-check-input" id="radio2" name="phanquyen" value="Cán bộ quản lý đào tạo">Cán bộ quản lý đào tạo
                                     <label class="form-check-label" for="radio2"></label>
                                 </div>
                                 <div class="form-check">
@@ -85,11 +85,10 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+                            <input class="form-control" Value="" id="password" name="password" type="password" value="" />
                         </div>
                     </div>
-
+                    <input value=@Model.password name="pass" id="pass" hidden/>
                     <div class="form-group mx-2">
                         <div class="col-md-offset-2 ">
                             <input type="submit" value="Lưu" class="btn btn-primary" />

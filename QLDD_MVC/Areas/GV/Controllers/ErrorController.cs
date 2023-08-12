@@ -9,16 +9,20 @@ namespace QLDD_MVC.Areas.GV.Controllers
 {
     public class ErrorController : Controller
     {
-        // GET: CBDT/Error
         public ActionResult Index(string error)
         {
             ViewData["error"] = error;
+            SetHotengv();
             return View();
         }
-        public ErrorController()
+        public void SetHotengv()
         {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
     }
 }

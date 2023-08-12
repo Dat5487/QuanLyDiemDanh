@@ -8,10 +8,12 @@
     using System.Data;
     using System.Data.Entity.Spatial;
     using System.Data.SqlClient;
+    using System.Linq;
 
     [Table("chitietdd")]
     public partial class chitietdd : KetNoiSql
     {
+        private DataContextDB db = new DataContextDB();
         DataSet ds = new DataSet();
         SqlDataAdapter da1 = new SqlDataAdapter();
         public chitietdd()
@@ -38,7 +40,7 @@
 
         public void DeleteChitietdd(int madd, string masv)
         {
-            string query = String.Format("madd = {0} AND masv = {1}", madd, masv);
+            string query = String.Format("madd = {0} AND masv = '{1}'", madd, masv);
             DataRow[] rows = ds.Tables["chitietdd"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "chitietdd");
@@ -49,11 +51,10 @@
         {
             string query = String.Format("madd = {0}", madd);
             DataRow[] rows = ds.Tables["chitietdd"].Select(query);
-            try
+            foreach(DataRow row in rows)
             {
-                rows[0].Delete();
+                row.Delete();
             }
-            catch (Exception ex) { }
             da1.Update(ds, "chitietdd");
             ds.AcceptChanges();
         }
@@ -72,6 +73,31 @@
                 ds.AcceptChanges();
             }
         }
+
+        public void ChangeStatus(string maloptc, string masv)
+        {
+            DateTime date = DateTime.Now;
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == date.Date).FirstOrDefault().madd;
+            bool trangthaidd = db.chitietdds.FirstOrDefault(x => x.madd == madd && x.masv == masv).trangthai;
+            string query = String.Format("madd = {0} AND masv = '{1}'", madd, masv);
+            DataRow[] rows = ds.Tables["chitietdd"].Select(query);
+            if (rows.Length > 0)
+            {
+                rows[0].BeginEdit();
+                if (trangthaidd == true)
+                {
+                    rows[0]["trangthai"] = false;
+                }
+                else
+                {
+                    rows[0]["trangthai"] = true;
+                }
+                rows[0].EndEdit();
+                da1.Update(ds, "chitietdd");
+                ds.AcceptChanges();
+            }
+        }
+
         [Key]
         public int id { get; set; }
 

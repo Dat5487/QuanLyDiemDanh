@@ -1,4 +1,5 @@
-﻿using QLDD_MVC.Common;
+﻿using QLDD_MVC.Code;
+using QLDD_MVC.Common;
 using QLDD_MVC.Dao;
 using QLDD_MVC.Models;
 using System;
@@ -7,13 +8,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.Security;
 
 namespace QLDD_MVC.Controllers
 {
     public class LoginController : Controller
     {
-        // GET: QTV/Login
-        public static string hotengv;
+        public string magv = "0";
+        public string hotengv="a";
         public ActionResult Index()
         {
             return View();
@@ -28,59 +30,48 @@ namespace QLDD_MVC.Controllers
                 {
                     ModelState.AddModelError("", "Tên đăng nhập không đúng.");
                 }
-                var result = dao.Login(model.username, model.password);
+                var result = dao.Login(model.username, Encryptor.MD5Hash(model.password));
                 TaiKhoan tk = db.TaiKhoans.Find(model.username);
 
                 if (result)
                 {
                     string phanquyen = tk.phanquyen;
                     string username = tk.username;
+                    FormsAuthentication.SetAuthCookie(tk.username, false);
+
                     if (phanquyen.TrimEnd().Equals("Quản trị viên"))
                         return RedirectToAction("Index", "Home", new { area = "QTV" });
                     if (db.giangviens.Where(x => x.username == username).FirstOrDefault() == null)
                         return RedirectToAction("Index", "ErrorM", new { error = "Tên đăng nhập này chưa được gán cho giảng viên nào" });
 
                     magv = db.giangviens.Where(x => x.username == username).FirstOrDefault().magv;
+                    TempData["magv"] = magv;
+
                     hotengv = db.giangviens.Find(magv).hoten;
-                    if (phanquyen.TrimEnd() == "Cán bộ đào tạo")
+                    TempData["hotengv"] = hotengv;
+
+                    if (phanquyen.TrimEnd() == "Cán bộ quản lý đào tạo")
                         return RedirectToAction("Index", "Home", new { area = "CBDT" });
                     if (db.giangviens.Where(x => x.username == username).FirstOrDefault() == null)
-                        return RedirectToAction("Index", "ErrorM", new { error = "Giảng viên không có trong danh sách giảng viên, hãy liên hệ với CBĐT để thêm giảng viên" });
+                        return RedirectToAction("Index", "ErrorM", new { error = "Giảng viên không có trong danh sách giảng viên, hãy liên hệ với CBQLĐT để thêm giảng viên" });
 
                     return RedirectToAction("Index", "Home", new { area = "GV" });
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Đăng nhập không đúng.");
+                    ModelState.AddModelError("", "Mật khẩu không đúng.");
                 }
             }
             return View("Index");
         }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
-        protected void SetAlert(string message, string type)
-        {
-            TempData["AlertMessage"] = message;
-            if (type == "success")
-            {
-                TempData["AlertType"] = "alert-success";
-            }
-            else if (type == "warning")
-            {
-                TempData["AlertType"] = "alert-warning";
-            }
-            else if (type == "error")
-            {
-                TempData["AlertType"] = "alert-danger";
-            }
-        }
-        public static int magv = 0;
-        public int Getmagv()
-        {
-            return magv;
-        }
-        public string Gethotengv()
-        {
-            return hotengv;
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
     }
 }

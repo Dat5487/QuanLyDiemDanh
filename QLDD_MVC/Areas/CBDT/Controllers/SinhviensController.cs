@@ -25,117 +25,115 @@ using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class SinhviensController : Controller
+    [Authorize]
+
+    public class SinhviensController : BaseController
     {
         private DataContextDB db = new DataContextDB();
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DataContextDB"].ConnectionString);
         OleDbConnection Econ;
-        public SinhviensController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-        // GET: CBDT/Sinhviens
+
         public ActionResult DsAllSinhVien()
         {
             string idtype = "None";
             var dao = new Data.ListAllPaging();
-            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging(0, idtype);
+            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging("0", idtype);
+            SetHotengv();
             return View(model);
         }
-        public ActionResult Index(int? id,string root)
+        public ActionResult Index(string malophc,string root)
         {
             var dao = new Data.ListAllPaging();
             string idtype = "LopHC";
-            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging(id,idtype);
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
+            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging(malophc, idtype);
+            var sinhvien = db.Sinhviens.Where(i => i.malophc == malophc);
 
             if (sinhvien == null)
                 return RedirectToAction("Error",new {error = "Lỗi"});
 
             //Hien thi ten giang vien
-            var lop = db.LopHCs.Find(id);
+            var lop = db.LopHCs.Find(malophc);
             if (lop != null)
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
             else
                 ViewData["tengv"] = "Not found";
 
-            ViewData["tenlophc"] = db.LopHCs.Find(id).tenlophc;
-            ViewData["malophc"] = id;
+            ViewData["tenlophc"] = db.LopHCs.Find(malophc).tenlophc;
+            ViewData["malophc"] = malophc;
             ViewData["root"] = root;
-
+            SetHotengv();
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Index(HttpPostedFileBase file, int malophc)
+        public ActionResult Index(HttpPostedFileBase file, string malophc)
         {
             string filename = Guid.NewGuid() + Path.GetExtension(file.FileName);
             string filepath = "/Dao/" + filename;
             file.SaveAs(Path.Combine(Server.MapPath("/Dao/"), filename));
             if(InsertExceldataToLopHC(filepath, filename, malophc)==1)
             {
-                return RedirectToAction("Index", "Error", new { error = "Danh sách sinh viên trong File Excel có sinh viên đã tồn tại trong hệ thống" });
+                return RedirectToAction("DuplicateErrorLopHC", "Error", new { error = "Danh sách sinh viên trong File Excel có sinh viên đã tồn tại trong hệ thống", malophc = malophc });
             }
             else if(InsertExceldataToLopHC(filepath, filename, malophc) == 2)
             {
                 return RedirectToAction("Index", "Error", new { error = "Bảng trong File Excel không đúng quy định" });
             }
-            return RedirectToAction("Index", new { id = malophc, root= "DsLopHC" });
+            SetAlert("Nhập danh sách sinh viên thành công", "success");
+            return RedirectToAction("Index", new { malophc = malophc, root= "DsLopHC" });
         }
 
-        public ActionResult Index_LopTC(int? id,string root)
+        public ActionResult Index_LopTC(string maloptc, string root)
         {
             var dao = new Data.ListAllPaging();
-            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging(id, "LopTC");
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
+            IEnumerable<Sinhvien> model = dao.ListAllSinhvienPaging(maloptc, "LopTC");
 
-            if (sinhvien == null)
-                return RedirectToAction("Error", new { error = "Lỗi" });
-
-            var lop = db.LopTCs.Find(id);
+            var lop = db.LopTCs.Find(maloptc);
             if (db.giangviens.Where(c => c.magv == lop.magv).FirstOrDefault() != null)
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
             else
                 ViewData["tengv"] = "Not found";
 
             ViewData["tentc"] = lop.tenltc;
-            ViewData["maloptc"] = id;
+            ViewData["maloptc"] = maloptc;
             ViewData["root"] = root;
-
+            SetHotengv();
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Index_LopTC(HttpPostedFileBase file, int maloptc)
-
+        public ActionResult Index_LopTC(HttpPostedFileBase file, string maloptc)
         {
             string filename = Guid.NewGuid() + Path.GetExtension(file.FileName);
             string filepath = "/Dao/" + filename;
             file.SaveAs(Path.Combine(Server.MapPath("/Dao/"), filename));
-
-            if (InsertExceldataToLopTC(filepath, filename, maloptc) == 1)
+            int kq = InsertExceldataToLopTC(filepath, filename, maloptc);
+            if (kq == 1)
             {
-                return RedirectToAction("Index", "Error", new { error = "Danh sách sinh viên trong File Excel có sinh viên đã tồn tại trong lớp tín chỉ này" });
+                return RedirectToAction("DuplicateErrorLopTC", "Error", new { error = "Danh sách sinh viên trong File Excel có sinh viên đã tồn tại trong lớp tín chỉ này", maloptc = maloptc });
             }
-            else if (InsertExceldataToLopTC(filepath, filename, maloptc) == 2)
+            else if (kq == 2)
             {
                 return RedirectToAction("Index", "Error", new { error = "Bảng trong File Excel không đúng quy định" });
             }
             var dsmasv = db.LopTC_SV.Where(x => x.maloptc == maloptc).Select(x => x.masv);
+            //Kiểm tra nếu excel lỡ Insert sv không có trong hệ thống thì xóa sv đi
             LopTC_SV sv = new LopTC_SV();
             foreach (string masv in dsmasv)
             {
                 if (db.Sinhviens.Find(masv) == null)
                     sv.DeleteLopTC_SV(maloptc, masv);
             }
-            return RedirectToAction("Index_LopTC", new { id = maloptc, root= "DsLopTC" });
+            SetAlert("Nhập danh sách sinh viên thành công", "success");
+            return RedirectToAction("Index_LopTC", new { maloptc = maloptc, root = "DsLopTC" });
         }
 
-        public ActionResult Add_SVtoLopTC(int? id, string tentc)
+        public ActionResult Add_SVtoLopTC(string maloptc, string tentc)
         {
+            ViewBag.SV = db.Sinhviens.ToList();
             ViewData["tentc"] = tentc;
-            ViewData["maloptc"] = id;
+            ViewData["maloptc"] = maloptc;
+            SetHotengv();
             return View();
         }
 
@@ -160,6 +158,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                     //}    
                     db.LopTC_SV.Add(loptc_sv);
                     db.SaveChanges();
+                    SetAlert("Thêm sinh viên thành công", "success");
                     return RedirectToAction("Index_LopTC", new { id = loptc_sv.maloptc});
                 }
 
@@ -168,11 +167,11 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                     return RedirectToAction("Index", "Error", new { error = "Sinh viên không tồn tại trong hệ thống" });
                 }
             }
-
+            SetHotengv();
             return View(loptc_sv);
         }
 
-        public ActionResult DeleteSVFromLopTC(string masv, int maloptc)
+        public ActionResult DeleteSVFromLopTC(string masv, string maloptc)
         {
             if (masv == null)
             {
@@ -187,32 +186,29 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
             ViewData["hoten"] = db.Sinhviens.Find(masv).hoten;
             ViewData["maloptc"] = maloptc;
-
+            SetHotengv();
             return View(sv_loptc);
         }
 
-        // POST: CBDT/Sinhviens/Delete/5
         [HttpPost, ActionName("DeleteSVFromLopTC")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteSVFromLopTCConfirmed(string masv,int maloptc)
+        public ActionResult DeleteSVFromLopTCConfirmed(string masv,string maloptc)
         {
             LopTC_SV sv_loptc = db.LopTC_SV.Where(i => i.masv.Equals(masv)  && i.maloptc == maloptc).FirstOrDefault();
             db.LopTC_SV.Remove(sv_loptc);
             db.SaveChanges();
             return RedirectToAction("Index_LopTC", new { id = sv_loptc.maloptc, idtype = "LopTC"});
-
-
         }
 
-        // GET: CBDT/Sinhviens/Create
-        public ActionResult Create(int? id, string tenlophc)
+        public ActionResult Create(string malophc, string tenlophc)
         {
             ViewData["tenlophc"] = tenlophc;
-            ViewData["malophc"] = id;
+            ViewData["malophc"] = malophc;
+            ViewBag.lopHC = db.LopHCs.ToList();
+            SetHotengv();
             return View();
         }
 
-        // POST: CBDT/Sinhviens/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "masv,hoten,gioitinh,malophc,khoa")] Sinhvien sinhvien)
@@ -230,32 +226,31 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 }
                 db.Sinhviens.Add(sinhvien);
                 db.SaveChanges();
-                return RedirectToAction("Index", new { id = sinhvien.malophc});
+                SetAlert("Thêm sinh viên thành công", "success");
+                return RedirectToAction("Index", new { malophc = sinhvien.malophc});
             }
-
+            SetHotengv();
             return View(sinhvien);
         }
 
-        // GET: CBDT/Sinhviens/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(string masv)
         {
-            ViewData["hoten"]= db.Sinhviens.Find(id).hoten;
+            ViewData["hoten"]= db.Sinhviens.Find(masv).hoten;
+            ViewBag.lopHC = db.LopHCs.ToList();
 
-            if (id == null)
+            if (masv == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Sinhvien sinhvien = db.Sinhviens.Find(id);
+            Sinhvien sinhvien = db.Sinhviens.Find(masv);
             if (sinhvien == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(sinhvien);
         }
 
-        // POST: CBDT/Sinhviens/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "masv,hoten,gioitinh,malophc,khoa")] Sinhvien sinhvien)
@@ -269,52 +264,53 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 }
                 db.Entry(sinhvien).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Details", "LopHCs", new { id = malop});
+                SetAlert("Chỉnh sửa thông tin sinh viên thành công", "success");
+                return RedirectToAction("Details", "LopHCs", new { malophc = malop});
             }
             if (malop == null)
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Details", "LopHCs", new { id = malop });
+            return RedirectToAction("Details", "LopHCs", new { malophc = malop });
         }
 
-        // GET: CBDT/Sinhviens/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(string masv)
         {
-            if (id == null)
+            if (masv == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Sinhvien sinhvien = db.Sinhviens.Find(id);
+            Sinhvien sinhvien = db.Sinhviens.Find(masv);
             if (sinhvien == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(sinhvien);
         }
 
-        // POST: CBDT/Sinhviens/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string masv)
         {
-            Sinhvien sinhvien = db.Sinhviens.Find(id);
+            Sinhvien sinhvien = db.Sinhviens.Find(masv);
             db.Sinhviens.Remove(sinhvien);
+            SetAlert("Thêm sinh viên thành công", "success");
             db.SaveChanges();
             if(db.LopHCs.Find(sinhvien.malophc) != null)
             {
                 string name = db.LopHCs.Find(sinhvien.malophc).tenlophc;
-                return RedirectToAction("Index", new { id = sinhvien.malophc, name = name });
+                return RedirectToAction("Index", new { malophc = sinhvien.malophc, name = name });
             }
             else
                 return RedirectToAction("DsAllSinhVien");
 
         }
-        public ActionResult DSSVofLopHC(int? id,string root)
+        public ActionResult DSSVofLopHC(string malophc,string root)
         {
             //Lấy danh sách
-            IEnumerable<Sinhvien> model = db.Sinhviens.Where(i => i.malophc == id);
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
+            IEnumerable<Sinhvien> model = db.Sinhviens.Where(i => i.malophc == malophc);
+            var sinhvien = db.Sinhviens.Where(i => i.malophc == malophc);
 
             if (sinhvien == null)
             {
@@ -322,7 +318,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
 
             //Hiển thị/ Kiểm tra
-            var lop = db.LopHCs.Find(id);
+            var lop = db.LopHCs.Find(malophc);
             if (lop != null)
             {
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
@@ -330,19 +326,20 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             else
                 ViewData["tengv"] = "Not found";
 
-            ViewData["tenlophc"] = db.LopHCs.Find(id).tenlophc;
-            ViewData["malophc"] = id;
+            ViewData["tenlophc"] = db.LopHCs.Find(malophc).tenlophc;
+            ViewData["malophc"] = malophc;
             ViewData["root"] = root;
+            SetHotengv();
             return View(model);
         }
 
-        public ActionResult DSSVofLopTC(int? id,string root)
+        public ActionResult DSSVofLopTC(string maloptc, string root)
         {
             //Lấy danh sách
             IQueryable<Sinhvien> dssv = null; ;
             var listtempsv = new List<Sinhvien>();
             List<string> ds_masv = null;
-            ds_masv = db.LopTC_SV.Where(i => i.maloptc == id).Select(x => x.masv).ToList();
+            ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
 
             foreach (string ma1sv in ds_masv)
             {
@@ -351,36 +348,32 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
             IEnumerable<Sinhvien> model = listtempsv.AsQueryable();
             //Kiểm tra
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
+            var sinhvien = db.Sinhviens.Where(i => i.malophc == maloptc);
             if (sinhvien == null)
                 return RedirectToAction("NoResult");
 
-            var lop = db.LopTCs.Find(id);
+            var lop = db.LopTCs.Find(maloptc);
             if (db.giangviens.Where(c => c.magv == lop.magv).FirstOrDefault() != null)
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
             else
                 ViewData["tengv"] = "Not found";
 
             ViewData["tenltc"] = lop.tenltc;
-            ViewData["maloptc"] = id;
+            ViewData["maloptc"] = maloptc;
             ViewData["root"] = root;
-
+            SetHotengv();
             return View(model);
         }
-        private int InsertExceldataToLopHC(string filepath, string filename, int malophc)
+        private int InsertExceldataToLopHC(string filepath, string filename, string malophc)
         {
             string path = string.Concat(Server.MapPath("/Dao/") + filename);
-            // Connection String to Excel Workbook  
             string excelCS = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=Excel 8.0", path);
             using (OleDbConnection con = new OleDbConnection(excelCS))
             {
-                OleDbCommand cmd = new OleDbCommand("select *," + malophc + " as [malophc]" + " from [Sheet1$]", con);
+                OleDbCommand cmd = new OleDbCommand("select *,'" + malophc + "' as [malophc]" + " from [Sheet1$]", con);
                 con.Open();
-                // Create DbDataReader to Data Worksheet  
                 DbDataReader dr = cmd.ExecuteReader();
-                // SQL Server Connection String  
                 string CS = ConfigurationManager.ConnectionStrings["DataContextDB"].ConnectionString;
-                // Bulk Copy to SQL Server   
                 SqlBulkCopy bulkInsert = new SqlBulkCopy(CS);
                 try
                 {
@@ -394,6 +387,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 }
                 catch (SqlException)
                 {
+                    InsertExceTemp(filepath, filename);
                     return 1;
                 }
                 catch(InvalidOperationException)
@@ -403,7 +397,7 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
             return 0;
         }
-        private int InsertExceldataToLopTC(string filepath, string filename, int maloptc)
+        private int InsertExceldataToLopTC(string filepath, string filename, string maloptc)
         {
             int slbefore = db.LopTC_SV.Where(x => x.maloptc == maloptc).Count();
             string path = string.Concat(Server.MapPath("/Dao/") + filename);
@@ -411,12 +405,9 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             string excelCS = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=Excel 8.0", path);
             using (OleDbConnection con = new OleDbConnection(excelCS))
             {
-                //OleDbCommand cmd = new OleDbCommand("select * from [Sheet1$]", con);
-                OleDbCommand cmd = new OleDbCommand("select *," + maloptc + " as [maloptc]" + " from [Sheet1$]", con);
+                OleDbCommand cmd = new OleDbCommand("select *,'" + maloptc + "' as [maloptc]" + " from [Sheet1$]", con);
                 con.Open();
-                // Create DbDataReader to Data Worksheet  
                 DbDataReader dr = cmd.ExecuteReader();
-                // SQL Server Connection String  
                 string CS = ConfigurationManager.ConnectionStrings["DataContextDB"].ConnectionString;
                 // Bulk Copy to SQL Server   
                 SqlBulkCopy bulkInsert = new SqlBulkCopy(CS);
@@ -426,11 +417,15 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                     bulkInsert.ColumnMappings.Add("Mã sinh viên", "masv");
                     bulkInsert.ColumnMappings.Add("maloptc", "maloptc");
                     bulkInsert.WriteToServer(dr);
+                    con.Close();
                 }
                 catch (SqlException)
                 {
                     if (db.LopTC_SV.Where(x => x.maloptc == maloptc).Count() == slbefore)
+                    {
+                        InsertExceTemp(filepath, filename);
                         return 1;
+                    }
                     else
                         return 0;
                 }
@@ -440,6 +435,39 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 }
             }
             return 0;
+        }
+
+        private int InsertExceTemp(string filepath, string filename)
+        {
+            string path = string.Concat(Server.MapPath("/Dao/") + filename);
+            // Connection String to Excel Workbook  
+            string excelCS = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=Excel 8.0", path);
+            using (OleDbConnection con = new OleDbConnection(excelCS))
+            {
+                OleDbCommand cmd = new OleDbCommand("select * from [Sheet1$]", con);
+                con.Open();
+                DbDataReader dr = cmd.ExecuteReader();
+                string CS = ConfigurationManager.ConnectionStrings["DataContextDB"].ConnectionString;
+                // Bulk Copy to SQL Server   
+                SqlBulkCopy bulkInsert = new SqlBulkCopy(CS);
+                try
+                {
+                    bulkInsert.DestinationTableName = "TempSV";
+                    bulkInsert.ColumnMappings.Add("Mã sinh viên", "masv");
+                    bulkInsert.WriteToServer(dr);
+                }
+                catch (InvalidOperationException){}
+            }
+            return 0;
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
 
         protected override void Dispose(bool disposing)

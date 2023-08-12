@@ -15,62 +15,62 @@ using System.Configuration;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
+using System.Data.Entity.SqlServer;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class LopHCsController : Controller
+    [Authorize]
+
+    public class LopHCsController : BaseController
     {
         private DataContextDB db = new DataContextDB();
+        LopHC lophc = new LopHC();
 
-        // GET: CBDT/LopHCs
-        public LopHCsController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
         public ActionResult Index()
         {
             var dao = new ListAllPaging();
             var model = dao.ListAllLopHCPaging();
+            SetHotengv();
             return View(model);
         }
 
-
         public ActionResult ListLopHCofGV()
         {
-            LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
+
+            TempData.Keep("magv");
             var dao = new ListAllPaging();
             var model = dao.ListAllLopHCofGVPaging(magv);
             if (model == null)
                 return RedirectToAction("Index", "Error", new { error = "Bạn không chủ nhiệm lớp hành chính nào" });
+            SetHotengv();
             return View(model);
         }
-        // GET: CBDT/LopHCs/Details/5
-        public ActionResult Details(int? id,string root)
+
+        public ActionResult Details(string malophc,string root)
         {
-            if (id == null)
+            if (malophc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopHC lopHC = db.LopHCs.Find(id);
+            LopHC lopHC = db.LopHCs.Find(malophc);
             if (lopHC == null)
             {
                 return HttpNotFound();
             }
 
-            return RedirectToAction("Index", "Sinhviens", new { id = id, root = root });
+            return RedirectToAction("Index", "Sinhviens", new { malophc = malophc, root = root });
         }
 
-        // GET: CBDT/LopHCs/Create
         public ActionResult Create()
         {
+            ViewBag.GV = db.giangviens.ToList();
+            SetHotengv();
             return View();
         }
 
-        // POST: CBDT/LopHCs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "malophc,tenlophc,magv,khoa")] LopHC lopHC)
@@ -95,29 +95,33 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 {
                     return RedirectToAction("Index", "Error", new { error = "Tên đăng nhập không được phân quyền phù hợp" });
                 }
-                db.LopHCs.Add(lopHC);
-                db.SaveChanges();
+                lopHC.CreateLopHC(lopHC.tenlophc, lopHC.magv, lopHC.khoa);
 
                 GVCN gvcn = new GVCN();
-                gvcn.CreateGVCN(gv.magv, lopHC.malophc, gv.username);
+                string malophcmoitao = db.LopHCs.OrderByDescending(x => x.malophc).FirstOrDefault().malophc;
+                gvcn.CreateGVCN(gv.magv, malophcmoitao, gv.username);
+
+                SetAlert("Thêm lớp hành chính thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(lopHC);
         }
 
         // GET: CBDT/LopHCs/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string malophc)
         {
-            
-            if (id == null)
+            ViewBag.GV = db.giangviens.ToList();
+            if (malophc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopHC lopHC = db.LopHCs.Find(id);
+            LopHC lopHC = db.LopHCs.Find(malophc);
             if (lopHC == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(lopHC);
         }
 
@@ -148,52 +152,64 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 {
                     return RedirectToAction("Index", "Error", new { error = "Tên đăng nhập không được phân quyền phù hợp" });
                 }
-                db.Entry(lopHC).State = EntityState.Modified;
-                db.SaveChanges();
+                lopHC.EditLopHC(lopHC.malophc,lopHC.tenlophc, lopHC.magv, lopHC.khoa);
+
                 GVCN gvcn = new GVCN();
                 gvcn.EditGVCN(gv.magv, lopHC.malophc, gv.username);
+                SetAlert("Chỉnh sửa lớp hành chính thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(lopHC);
 
         }
 
 
         // GET: CBDT/LopHCs/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string malophc)
         {
-            if (id == null)
+            if (malophc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopHC lopHC = db.LopHCs.Find(id);
-            if (lopHC == null)
+            LopHC lopHC = db.LopHCs.Find(malophc);
+            if (lopHC == null)  
             {
                 return HttpNotFound();
             }
-            if (db.Sinhviens.Where(c => c.malophc == id).FirstOrDefault() != null)
+            if (db.Sinhviens.Where(c => c.malophc == malophc).FirstOrDefault() != null)
             {
                 return RedirectToAction("Index", "Error", new { error = "Không thể xóa lớp do vẫn còn sinh viên trong lớp" });
             }
+            SetHotengv();
             return View(lopHC);
         }
 
         // POST: CBDT/LopHCs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string malophc)
         {
-            LopHC lopHC = db.LopHCs.Find(id);
+            LopHC lopHC = db.LopHCs.Find(malophc);
             giangvien gv = db.giangviens.Find(lopHC.magv);
             db.LopHCs.Remove(lopHC);
             db.SaveChanges();
 
             GVCN gvcn = new GVCN();
             gvcn.DeleteGVCN(gv.magv, lopHC.malophc);
+            SetAlert("Xóa lớp hành chính thành công", "success");
             return RedirectToAction("Index");
         }
 
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
+        }
 
         protected override void Dispose(bool disposing)
         {

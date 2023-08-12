@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace QLDD_MVC.Areas.QTV.Controllers
 {
+    [Authorize]
     public class ErrorController : Controller
     {
         // GET: QTV/Error

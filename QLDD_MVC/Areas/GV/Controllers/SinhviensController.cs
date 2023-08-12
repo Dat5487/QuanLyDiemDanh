@@ -16,25 +16,21 @@ using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
+    [Authorize]
     public class SinhviensController : Controller
     {
         private DataContextDB db = new DataContextDB();
-        public SinhviensController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-        // GET: CBDT/Sinhviens
         public ActionResult DsAllSinhVien()
         {
-            IEnumerable<Sinhvien> model = model = db.Sinhviens;
+            IEnumerable<Sinhvien> model = db.Sinhviens;
+            SetHotengv();
             return View(model);
         }
-        public ActionResult Index(int? id)
+        public ActionResult Index(string malophc)
         {
             //Lấy danh sách
-            IEnumerable<Sinhvien> model = db.Sinhviens.Where(i => i.malophc == id);
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
+            IEnumerable<Sinhvien> model = db.Sinhviens.Where(i => i.malophc == malophc);
+            var sinhvien = db.Sinhviens.Where(i => i.malophc == malophc);
 
             if (sinhvien == null)
             {
@@ -42,7 +38,7 @@ namespace QLDD_MVC.Areas.GV.Controllers
             }
 
             //Hiển thị/ Kiểm tra
-            var lop = db.LopHCs.Find(id);
+            var lop = db.LopHCs.Find(malophc);
             if (lop != null)
             {
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
@@ -50,18 +46,19 @@ namespace QLDD_MVC.Areas.GV.Controllers
             else
                 ViewData["tengv"] = "Not found";
 
-            ViewData["tenlophc"] = db.LopHCs.Find(id).tenlophc;
-            ViewData["malophc"] = id;
+            ViewData["tenlophc"] = db.LopHCs.Find(malophc).tenlophc;
+            ViewData["malophc"] = malophc;
+            SetHotengv();
             return View(model);
         }
 
-        public ActionResult Index_LopTC(int? id)
+        public ActionResult Index_LopTC(string maloptc)
         {
             //Lấy danh sách
             IQueryable<Sinhvien> dssv = null; ;
             var listtempsv = new List<Sinhvien>();
             List<string> ds_masv = null;
-            ds_masv = db.LopTC_SV.Where(i => i.maloptc == id).Select(x => x.masv).ToList();
+            ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
 
             foreach (string ma1sv in ds_masv)
             {
@@ -69,23 +66,27 @@ namespace QLDD_MVC.Areas.GV.Controllers
                     listtempsv.Add(db.Sinhviens.Find(ma1sv));
             }
             IEnumerable<Sinhvien> model = listtempsv.AsQueryable();
-            //Kiểm tra
-            var sinhvien = db.Sinhviens.Where(i => i.malophc == id);
-            if (sinhvien == null)
-                return RedirectToAction("NoResult");
 
-            var lop = db.LopTCs.Find(id);
+            var lop = db.LopTCs.Find(maloptc);
             if (db.giangviens.Where(c => c.magv == lop.magv).FirstOrDefault() != null)
                 ViewData["tengv"] = db.giangviens.Find(lop.magv).hoten;
             else
                 ViewData["tengv"] = "Not found";
             
             ViewData["tenltc"] = lop.tenltc;
-            ViewData["maloptc"] = id;
-
+            ViewData["maloptc"] = maloptc;
+            SetHotengv();
             return View(model);
         }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

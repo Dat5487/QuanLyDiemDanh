@@ -24,9 +24,9 @@
         }
 
 
-        public void DeleteLopTC_SV(int? maloptc, string masv)
+        public void DeleteLopTC_SV(string maloptc, string masv)
         {
-            string query = String.Format("maloptc = {0} AND masv = '{1}'", maloptc, masv);
+            string query = String.Format("maloptc = '{0}' AND masv = '{1}'", maloptc, masv);
             DataRow[] rows = ds.Tables["LopTC_SV"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "LopTC_SV");
@@ -35,7 +35,7 @@
         public int id { get; set; }
 
         [DisplayName("Mã lớp tín chỉ")]
-        public int maloptc { get; set; }
+        public string maloptc { get; set; }
 
         [DisplayName("Mã sinh viên")]
         public string masv { get; set; }

@@ -18,7 +18,7 @@ namespace QLDD_MVC.Areas.CBDT.Data
         {
             db = new DataContextDB();
         }
-        public IEnumerable<Sinhvien> ListAllSinhvienPaging(int? id, string idtype)
+        public IEnumerable<Sinhvien> ListAllSinhvienPaging(string id, string idtype)
         {
             IQueryable<Sinhvien> model = null;
 
@@ -71,7 +71,7 @@ namespace QLDD_MVC.Areas.CBDT.Data
             return model;
         }
 
-        public IEnumerable<diemdanh> ListAllDiemDanhPaging(string masv,int maloptc)
+        public IEnumerable<diemdanh> ListAllDiemDanhPaging(string masv,string maloptc)
         {
 
             //IQueryable<chitietdd> dsdd = null;
@@ -129,7 +129,7 @@ namespace QLDD_MVC.Areas.CBDT.Data
 
         }
 
-        public IEnumerable<LopHC> ListAllLopHCofGVPaging(int magv)
+        public IEnumerable<LopHC> ListAllLopHCofGVPaging(string magv)
         {
             if (db.LopHCs.Where(x => x.magv == magv).FirstOrDefault() == null)
                 return null;
@@ -139,15 +139,15 @@ namespace QLDD_MVC.Areas.CBDT.Data
             return model;
         }
 
-        public IEnumerable<LopTC> ListAllLopTCofGVPaging(int magv)
+        public IEnumerable<LopTC> ListAllLopTCofGVPaging(string magv)
         {
             IQueryable<LopTC> model = null;
             var listtemploptc = new List<LopTC>();
-            List<int> ds_maloptc = null;
+            List<string> ds_maloptc = null;
 
             ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
 
-            foreach (int ma1loptc in ds_maloptc)
+            foreach (string ma1loptc in ds_maloptc)
             {
                 if (db.LopTCs.Find(ma1loptc) != null)
                     listtemploptc.Add(db.LopTCs.Find(ma1loptc));

@@ -3,7 +3,7 @@
 @{DataContextDB db = new DataContextDB(); }
 
 @{
-    ViewBag.Title = "ListLopTCofGV";
+    ViewBag.Title = "Danh sách lớp tín chỉ của bạn";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -77,7 +77,7 @@
                                 </td>
                                 <td>@db.LopTC_SV.Where(x => x.maloptc == item.maloptc).Count()</td>
                                 <td>
-                                    @Html.ActionLink("Xem SV trong lớp", "DSSVofLopTC", "Sinhviens", new { id = item.maloptc, root = "DsLopTCofGV" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Xem SV trong lớp", "DSSVofLopTC", "Sinhviens", new { maloptc = item.maloptc, root = "DsLopTCofGV" }, new { @class = "btn btn-primary" })
                                 </td>
                             </tr>
                         }
@@ -87,3 +87,27 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

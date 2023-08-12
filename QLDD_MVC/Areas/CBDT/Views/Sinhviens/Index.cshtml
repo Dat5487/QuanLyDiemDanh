@@ -4,7 +4,7 @@
 
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Danh sách sinh viên trong lớp hành chính : " + ViewBag.tenlophc;
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 
 }
@@ -19,16 +19,18 @@
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp hành chính : @ViewBag.tenlophc</h4>
                 </div>
                 <div class="col-4 ">
-                    @if (ViewBag.root == "DsLopHC")
-                    {
-                        @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
-                    }
-                    else if (ViewBag.root == "DsLopHCofGV")
-                    {
-                        @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
-                    }
+                    @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
 
-                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
+                    @*@if (ViewBag.root == "DsLopHC")
+                        {
+                            @Html.ActionLink("Quay lại", "Index", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
+                        }
+                        else if (ViewBag.root == "DsLopHCofGV")
+                        {
+                            @Html.ActionLink("Quay lại", "ListLopHCofGV", "LopHCs", new { }, new { @class = "btn btn-danger float-right mx-1" })
+                        }*@
+
+                    @Html.ActionLink("Thêm sinh viên", "Create", new { malophc = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
 
                     <button type="button" class="btn btn-primary float-right mx-1" data-toggle="modal" data-target="#myModal">
                         <i class="fa fa-plus-circle"></i> Nhập File Excel
@@ -64,7 +66,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div ><h5>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h5></div>
+            <div><h5>Họ tên giáo viên chủ nhiệm : @ViewBag.tengv</h5></div>
             <div class="table-responsive mt-3">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -99,8 +101,8 @@
                                 </td>
                                 <td>
                                     @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv, root = "DsSVLopHC" }, new { @class = "btn btn-primary" })
-                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.masv }, new { @class = "btn btn-warning" })
-                                    @Html.ActionLink("Xóa", "Delete", new { id = item.masv }, new { @class = "btn btn-danger" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { masv = item.masv }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { masv = item.masv }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>
                         }
@@ -112,3 +114,42 @@
 </div>
 
 
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                stateSave: true,
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }, {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }
+                ]
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

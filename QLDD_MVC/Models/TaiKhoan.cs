@@ -49,8 +49,8 @@
         [DisplayName("Phân quyền")]
         public string phanquyen { get; set; }
 
-        [StringLength(20, ErrorMessage = "Mật khẩu phải dưới 20 ký tự")]
-        [Required(ErrorMessage = "Bắt buộc phải nhập mật khẩu")]
+        //[StringLength(100, ErrorMessage = "Mật khẩu phải dưới 20 ký tự")]
+        //[Required(ErrorMessage = "Bắt buộc phải nhập mật khẩu")]
         [DisplayName("Mật khẩu")]
         public string password { get; set; }
     }

@@ -14,21 +14,15 @@ using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class diemdanhsController : Controller
+    [Authorize]
+    public class diemdanhsController : BaseController
     {
-        public diemdanhsController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-
         private DataContextDB db = new DataContextDB();
-
         public ActionResult Index_LopHC(string masv,string root)
         {
             var listtemploptc = new List<LopTC>();
-            List<int> dsmaloptc = db.LopTC_SV.Where(x => x.masv == masv).Select(x=>x.maloptc).ToList();
-            foreach(int ma1loptc in dsmaloptc)
+            List<string> dsmaloptc = db.LopTC_SV.Where(x => x.masv == masv).Select(x=>x.maloptc).ToList();
+            foreach(string ma1loptc in dsmaloptc)
             {
                 if (db.LopTCs.Find(ma1loptc) != null)
                 {
@@ -43,10 +37,10 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             ViewData["tenlophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).tenlophc;
             ViewData["malophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).malophc;
             ViewData["root"] = root;
-
+            SetHotengv();
             return View(model);
         }
-        public ActionResult GetdiemdanhByDate(int maloptc, DateTime date)
+        public ActionResult GetdiemdanhByDate(string maloptc, DateTime date,string root)
         {
             date = date.Date;
             var listtempsv = new List<DSSVxChitietdd>();
@@ -75,11 +69,13 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             ViewData["tentc"] = db.LopTCs.Find(maloptc).tenltc;
             ViewData["maloptc"] = maloptc;
             ViewData["ngaydd"] = date.ToString("dd/MM/yyyy");
-
+            ViewData["ngayddraw"] = date;
+            ViewData["root"] = root;
+            SetHotengv();
             return View(ttdd);
         }
 
-        public ActionResult DDInfoOfSV_LopTC(int? maloptc,string masv)
+        public ActionResult DDInfoOfSV_LopTC(string maloptc,string masv)
         {
             List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();
             var dsttdd = new List<chitietdd>();
@@ -94,8 +90,67 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             ViewData["malophc"] = db.LopHCs.Find(db.Sinhviens.Find(masv).malophc).malophc;
             ViewData["khoa"] = db.Sinhviens.Find(masv).khoa;
             ViewData["tenloptc"] = db.LopTCs.Find(maloptc).tenltc;
-
+            SetHotengv();
             return View(model);
+        }
+        public ActionResult ChangeStatus(string maloptc, string masv, DateTime date)
+        {
+            chitietdd dd = new chitietdd();
+            dd.ChangeStatus(maloptc, masv);
+            return RedirectToAction("GetdiemdanhByDate", new { maloptc = maloptc, date = date, root= "DsLopTCofGV" });
+        }
+        public ActionResult TaoHdDD(string maloptc)
+        {
+            var now = DateTime.Now.Date;
+            if (db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault() != null)
+                return RedirectToAction("Index", "Error", new { error = "Lớp này đã tạo hoạt động điểm danh trong hôm nay" });
+
+            diemdanh dd = new diemdanh();
+            dd.CreateDiemdanh(maloptc);
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+
+            List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
+            foreach (string ma1sv in ds_masv)
+            {
+                if (db.Sinhviens.Find(ma1sv) != null)
+                {
+                    var sv = db.Sinhviens.Find(ma1sv);
+                    chitietdd ttdd = new chitietdd();
+                    ttdd.CreateChitietdd(madd, ma1sv);
+                }
+            }
+            SetAlert("Tạo hoạt động điểm danh thành công", "success");
+            return RedirectToAction("GetdiemdanhByDate", new { maloptc = maloptc, date = now, root = "DsLopTCofGV" });
+        }
+        public ActionResult HuyHdDD(string maloptc)
+        {
+            var now = DateTime.Now.Date;
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            diemdanh dd = new diemdanh();
+            dd.DeleteHDDiemdanh(maloptc);
+            chitietdd ttdd = new chitietdd();
+            ttdd.DeleteHDChitietDD(madd);
+            SetAlert("Hủy hoạt động điểm danh thành công", "success");
+            return RedirectToAction("DSSVofLopTC", "Sinhviens", new { maloptc = maloptc });
+        }
+
+        public ActionResult KetthucHdDD(string maloptc)
+        {
+            var now = DateTime.Now.Date;
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            diemdanh dd = new diemdanh();
+            dd.KetthucHdDD(maloptc);
+            SetAlert("Kết thúc hoạt động điểm danh thành công", "success");
+            return RedirectToAction("DSSVofLopTC", "Sinhviens", new { maloptc = maloptc });
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
         protected override void Dispose(bool disposing)
         {

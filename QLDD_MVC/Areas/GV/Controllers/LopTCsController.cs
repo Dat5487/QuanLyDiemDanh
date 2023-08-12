@@ -17,25 +17,24 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
+    [Authorize]
     public class LopTCsController : Controller
     {
         private DataContextDB db = new DataContextDB();
-        public LopTCsController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-        // GET: CBDT/LopTCs
         public ActionResult Index()
         {
             LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
+
+            TempData.Keep("magv");
             IQueryable<LopTC> model = null;
             var listtemploptc = new List<LopTC>();
-            List<int> ds_maloptc = null;
+            List<string> ds_maloptc = null;
             ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
 
-            foreach (int ma1loptc in ds_maloptc)
+            foreach (string ma1loptc in ds_maloptc)
             {
                 if (db.LopTCs.Find(ma1loptc) != null)
                     listtemploptc.Add(db.LopTCs.Find(ma1loptc));
@@ -44,26 +43,33 @@ namespace QLDD_MVC.Areas.GV.Controllers
             model = listtemploptc.AsQueryable();
             if (model == null)
                 return RedirectToAction("Index", "Error", new { error = "Bạn không có lớp tín chỉ nào" });
-
+            SetHotengv();
             return View(model);
         }
 
-        // GET: CBDT/LopTCs/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(string maloptc)
         {
-            if (id == null)
+            if (maloptc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopTC lopTC = db.LopTCs.Find(id);
+            LopTC lopTC = db.LopTCs.Find(maloptc);
             if (lopTC == null)
             {
                 return HttpNotFound();
             }
-            return RedirectToAction("Index_LopTC","Sinhviens", new { id = id });
+            return RedirectToAction("Index_LopTC","Sinhviens", new { maloptc = maloptc });
         }
 
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

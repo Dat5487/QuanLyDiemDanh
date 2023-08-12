@@ -1,7 +1,7 @@
 ﻿@model QLDD_MVC.Models.giangvien
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Thêm giảng viên mới";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -12,7 +12,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("Create", "giangviens", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
 
@@ -69,6 +69,12 @@
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UserPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="file" name="postedFile" accept="image/*"/>
                     </div>
                 </div>
                 <div class="form-group mx-2">

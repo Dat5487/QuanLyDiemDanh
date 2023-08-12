@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using API.Models;
+using QLDD_MVC.Code;
 
 namespace API.Controllers
 {
@@ -28,7 +30,7 @@ namespace API.Controllers
                 if (db.TaiKhoans.Find(username) == null)
                     return BadRequest("Không có tên đăng nhập trong hệ thống");
 
-                var result = dao.Login(username, password);
+                var result = dao.Login(username, Encryptor.MD5Hash(password));
                 TaiKhoan tk = db.TaiKhoans.Find(username);
                 if (result)
                 {
@@ -42,9 +44,9 @@ namespace API.Controllers
 
                     IQueryable<ApiLopTC> model = null;
                     var listtemploptc = new List<ApiLopTC>();
-                    List<int> ds_maloptc = null;
+                    List<string> ds_maloptc = null;
                     ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
-                    foreach (int ma1loptc in ds_maloptc)
+                    foreach (string ma1loptc in ds_maloptc)
                     {
                         var temp = db.LopTCs.Find(ma1loptc);
                         ApiLopTC loptc = new ApiLopTC();
@@ -64,8 +66,8 @@ namespace API.Controllers
             return BadRequest("Đăng nhập không đúng");
         }
 
-        public static int magv = 0;
-        public int Getmagv()
+        public static string magv = "0";
+        public string Getmagv()
         {
             return magv;
         }

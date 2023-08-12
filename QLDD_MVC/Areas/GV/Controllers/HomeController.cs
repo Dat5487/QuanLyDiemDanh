@@ -6,28 +6,27 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace QLDD_MVC.Areas.GV.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
-        // GET: CBDT/Home
         private DataContextDB db = new DataContextDB();
-        public HomeController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
         public ActionResult Index()
         {
             LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
 
+            TempData.Keep("magv");
             IQueryable<LopTC> model = null;
             var listtemploptc = new List<LopTC>();
-            List<int> ds_maloptc = null;
+            List<string> ds_maloptc = null;
             ds_maloptc = db.GVTCs.Where(x => x.magv == magv).Select(x => x.maloptc).ToList();
 
-            foreach (int ma1loptc in ds_maloptc)
+            foreach (string ma1loptc in ds_maloptc)
             {
                 if (db.LopTCs.Find(ma1loptc) != null)
                     listtemploptc.Add(db.LopTCs.Find(ma1loptc));
@@ -37,9 +36,17 @@ namespace QLDD_MVC.Areas.GV.Controllers
 
             ViewData["sllophcofgv"] = db.LopHCs.Where(x => x.magv == magv).Count();
             ViewData["slloptcofgv"] = model.Count();
-
-
+            SetHotengv();
             return View();
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
     }
 }

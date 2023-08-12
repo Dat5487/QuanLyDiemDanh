@@ -1,11 +1,19 @@
 ﻿@model IEnumerable<QLDD_MVC.Models.DSSVxChitietdd>
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
-@{int? maloptc = @ViewBag.maloptc; }
+@{string maloptc = @ViewBag.maloptc; }
 @{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();}
-
+@{DateTime ngaydd = ViewBag.ngayddraw;
+    DateTime now = DateTime.Now.Date;}
 @{
-    ViewBag.Title = "GetdiemdanhByDate";
+    bool trangthaingaydd = false;
+    if (db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == ngaydd) != null)
+    {
+        trangthaingaydd = db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == ngaydd).trangthaidd;
+    }
+}
+@{
+    ViewBag.Title = "Thông tin điểm danh của lớp : " + ViewBag.tentc + " Ngày : " + ViewBag.ngaydd;
     Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
 }
 
@@ -16,19 +24,21 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
-                <div class="col-8">
+                @*@Html.Raw(TempData["msg"])*@
+                <div class="col-5">
                     <h4 class="m-0 font-weight-bold text-primary">Thông tin điểm danh của lớp : @ViewBag.tentc</h4>
                     <h4 class="m-0 font-weight-bold text-primary">Ngày : @ViewBag.ngaydd</h4>
+                    <p id="demo"></p>
 
                 </div>
 
-                <div class="col-4">
-                    @Html.ActionLink("Quay lại", "Index_LopTC", "Sinhviens", new { id = ViewBag.maloptc }, new { @class = "btn btn-danger float-right" })
-                    <div class="dropdown show px-1 float-right">
+                <div class="col-7">
+                    @Html.ActionLink("Quay lại", "Index_LopTC", "Sinhviens", new { maloptc = ViewBag.maloptc }, new { @class = "btn btn-danger float-right" })
+                    <div class="dropdown show mr-1 float-right">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Thông tin điểm danh theo ngày
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-menu pl-2" aria-labelledby="dropdownMenuLink">
                             @{
                                 if (dsmadd.Count() == 0)
                                 {
@@ -38,10 +48,60 @@
                                 {
                                     foreach (int madd in dsmadd)
                                     {
-                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary mt-1 ml-1" })
                                     }
                                 }
                             }
+                        </div>
+                    </div>
+                    @if (db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == ngaydd) != null)
+                    {
+                        if (db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == ngaydd).trangthaidd == true)
+                        {
+                            <button type="button" class="btn btn-info mr-1 float-right " data-toggle="modal" data-target="#ketthucdd">
+                                Kết thúc điểm danh
+                            </button>
+                            <button type="button" class="btn btn-warning mr-1 float-right " data-toggle="modal" data-target="#huydd">
+                                Hủy điểm danh
+                            </button>
+                        }
+                    }
+                    <div class="modal fade" id="ketthucdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Kết thúc hoạt động điểm danh</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Bạn có muốn kết thúc điểm danh ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                    @Html.ActionLink("Kết thúc điểm danh", "KetthucHdDD", "diemdanhs", new { maloptc = maloptc }, new { @class = "btn btn-info" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="huydd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Hủy hoạt động điểm danh</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Bạn có muốn hủy điểm danh ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                    @Html.ActionLink("Hủy điểm danh", "HuyHdDD", "diemdanhs", new { maloptc = maloptc }, new { @class = "btn btn-warning" })
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -82,13 +142,27 @@
                                 <td>@item.tenlophc</td>
                                 <td>@item.thoigiandd.ToString("dd-MM-yyyy HH:mm:ss")</td>
                                 <td>
-                                    @if (item.trangthai == true)
+                                    @if (trangthaingaydd == false)
                                     {
-                                        <text>Có mặt</text>
+                                        if (item.trangthai == true)
+                                        {
+                                            <text>Có mặt</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Vắng</text>
+                                        }
                                     }
                                     else
                                     {
-                                        <text>Vắng</text>
+                                        if (item.trangthai == true)
+                                        {
+                                            @Html.ActionLink("Có mặt", "ChangeStatus", new { maloptc = maloptc, masv = item.masv, date = ngaydd }, new { @class = "btn btn-success" })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Vắng", "ChangeStatus", new { maloptc = maloptc, masv = item.masv, date = ngaydd }, new { @class = "btn btn-danger" })
+                                        }
                                     }
                                 </td>
                             </tr>
@@ -108,3 +182,40 @@
         $('#datetimepicker1').datetimepicker();
     });
 </script>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: ''
+                    }, {
+                        extend: 'pdf',
+                        title: ''
+                    }
+                ],
+                stateSave: true,
+
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

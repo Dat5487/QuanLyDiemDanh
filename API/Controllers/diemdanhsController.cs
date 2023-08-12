@@ -13,6 +13,7 @@ using System.Web.Http.Description;
 using System.Web.Mvc;
 using QLDD_MVC.Models;
 using RouteAttribute = System.Web.Http.RouteAttribute;
+using API.Models;
 
 namespace API.Controllers
 {
@@ -22,7 +23,7 @@ namespace API.Controllers
         //GV tạo hoạt động điểm danh trong n phút
         //Thêm mới ttdd cho tất cả sv trong lớp tc
         [Route("TaoHdDD")]
-        public IHttpActionResult TaoHdDD(int maloptc, string diadiem)
+        public IHttpActionResult TaoHdDD(string maloptc)
         {
             var now = DateTime.Now.Date;
             if(db.LopTCs.Find(maloptc).trangthai == false)
@@ -32,7 +33,7 @@ namespace API.Controllers
                 return BadRequest("Lớp này đã tạo hoạt động điểm danh trong hôm nay");
 
             diemdanh dd = new diemdanh();
-            dd.CreateDiemdanh(maloptc, diadiem);
+            dd.CreateDiemdanh(maloptc);
             int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
 
             List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
@@ -46,10 +47,11 @@ namespace API.Controllers
                     ttdd.CreateChitietdd(madd, ma1sv);
                 }
             }
+
             return Ok();
         }
-        [Route("XoaHdDD")]
-        public IHttpActionResult HuyHdDD(int maloptc)
+        [Route("HuyHdDD")]
+        public IHttpActionResult HuyHdDD(string maloptc)
         {
             var now = DateTime.Now.Date;
             if(db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault() == null)
@@ -64,9 +66,18 @@ namespace API.Controllers
             return Ok();
         }
 
+        [Route("KetthucHdDD")]
+        public IHttpActionResult KetthucHdDD(string maloptc)
+        {
+            var now = DateTime.Now.Date;
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            diemdanh dd = new diemdanh();
+            dd.KetthucHdDD(maloptc);
+            return Ok();
+        }
         //Nếu nhận diện sinh viên thành công thì sẽ cập nhật trạng thái diểm danh thành true
         [Route("PutTrangThaiDD")]
-        public IHttpActionResult PutTrangThaiDD(string masv,int maloptc)
+        public IHttpActionResult PutTrangThaiDD(string masv, string maloptc)
         {
             int madd;
             var now = DateTime.Now.Date;
@@ -83,29 +94,36 @@ namespace API.Controllers
             return Ok();
         }
 
-        [Route("GetDsNgayDD")]
-        public IHttpActionResult GetDsNgayDD(int maloptc)
-        {
-            List<DateTime> dsngay = new List<DateTime>();
-            var model = db.diemdanhs.Where(x => x.maloptc == maloptc);
-
-            foreach(var date in model)
-            {
-                dsngay.Add(date.ngaydd);
-            }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(dsngay);
-        }
-
-        //public IHttpActionResult DDStatus(int maloptc)
+        //[Route("GetDsNgayDD")]
+        //public IHttpActionResult GetDsNgayDD(int maloptc)
         //{
-        //    if (db.diemdanhs.Find(maloptc).diadiem == "true")
-        //        return Ok(true);
-        //    else
-        //        return Ok(false);
+        //    List<DateTime> dsngay = new List<DateTime>();
+        //    var model = db.diemdanhs.Where(x => x.maloptc == maloptc);
+
+        //    foreach(var date in model)
+        //    {
+        //        dsngay.Add(date.ngaydd);
+        //    }
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    return Ok(dsngay);
         //}
+        [Route("GetStatus")]
+
+        public IHttpActionResult GetDDStatus(string maloptc)
+        {
+            var now = DateTime.Now.Date;
+            if (db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == now) != null)
+            {
+                if (db.diemdanhs.FirstOrDefault(x => x.maloptc == maloptc && x.ngaydd == now).trangthaidd == true)
+                    return Ok(true);
+                else
+                    return Ok(false);
+            }
+            else
+                return Ok(false);
+        }
 
         protected override void Dispose(bool disposing)
         {

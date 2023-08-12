@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using QLDD_MVC.Areas.QTV.Controllers;
 using QLDD_MVC.Models;
+using API.Models;
 
 namespace API.Controllers
 {
@@ -17,20 +18,25 @@ namespace API.Controllers
     {
         private DataContextDB db = new DataContextDB();
 
-        //[ResponseType(typeof(LopHC))]
-        ////Lấy danh sách lớp HC của gv đăng nhập
-        //public IHttpActionResult GetLopHC()
-        //{
-        //    //Lấy magv từ LoginController
-        //    LoginController lg = new LoginController();
-        //    int magv = lg.Getmagv();
-        //    if (db.LopHCs.Where(x => x.magv == magv).FirstOrDefault() == null)
-        //        return BadRequest("Bạn không chủ nhiệm lớp hành chính nào");
-        //    IQueryable<LopHC> model = db.LopHCs.Where(x => x.magv == magv);
-
-        //    return Ok(model);
-        //}
-
+        [Route("GetAllLopHC")]
+        public IHttpActionResult GetAllLopHC()
+        {
+            var lopHCs = db.LopHCs;
+            var listTempLopHC = new List<ApiLopHC>();
+            foreach (LopHC lop in lopHCs)
+            {
+                ApiLopHC lophc = new ApiLopHC();
+                //lophc.id = lop.id;
+                lophc.malophc = lop.malophc;
+                lophc.tenlophc = lop.tenlophc;
+                //lophc.magv = lop.magv;
+                //lophc.khoa = lop.khoa;
+                lophc.sosv = db.Sinhviens.Where(x=> x.malophc == lop.malophc).Count();
+                listTempLopHC.Add(lophc);
+            }
+            IEnumerable<ApiLopHC> model = listTempLopHC.AsQueryable();
+            return Ok(model);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -40,9 +46,5 @@ namespace API.Controllers
             base.Dispose(disposing);
         }
 
-        private bool LopHCExists(int id)
-        {
-            return db.LopHCs.Count(e => e.malophc == id) > 0;
-        }
     }
 }

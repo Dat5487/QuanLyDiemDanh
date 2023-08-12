@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
-@{int maloptc = @ViewBag.maloptc; }
+@{string maloptc = @ViewBag.maloptc; }
 @{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();}
 @{ int sobuoidadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).Count();}
 
 
 
 @{
-    ViewBag.Title = "Index_LopTC";
+    ViewBag.Title = "Danh sách sinh viên trong lớp tín chỉ : " + @ViewBag.tentc;
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -35,23 +35,23 @@
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Thông tin điểm danh theo ngày
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-menu pl-2" aria-labelledby="dropdownMenuLink">
                             @{
                                 if (dsmadd.Count() == 0)
                                 {
-                                    <h6 class="px-2">Lớp chưa có hoạt động điểm danh</h6>
+                                    <h6 class="px-1">Lớp chưa có hoạt động điểm danh</h6>
                                 }
                                 else
                                 {
                                     foreach (int madd in dsmadd)
                                     {
-                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary mt-1 ml-1" })
                                     }
                                 }
                             }
                         </div>
                     </div>
-                    @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { id = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success float-right mx-1" })
+                    @Html.ActionLink("Thêm sinh viên", "Add_SVtoLopTC", new { maloptc = @ViewBag.maloptc, tentc = @ViewBag.tentc }, new { @class = "btn btn-success float-right mx-1" })
 
                     <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">
                         <i class="fa fa-plus-circle"></i> Nhập File Excel
@@ -68,7 +68,7 @@
                                         <div class="col-md-12">
                                             <form method="post" enctype="multipart/form-data">
                                                 <div class="d-flex justify-content-center">
-                                                    <input name="file" type="file" required />
+                                                    <input name="file" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required />
                                                     <input value=@ViewBag.maloptc name="maloptc" class=" form-control" hidden />
                                                     <button class="btn btn-success" type="submit">Nhập</button>
                                                 </div>
@@ -159,3 +159,42 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                stateSave: true,
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }, {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:last-child)',
+                        }, title: ''
+                    }
+                ]
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

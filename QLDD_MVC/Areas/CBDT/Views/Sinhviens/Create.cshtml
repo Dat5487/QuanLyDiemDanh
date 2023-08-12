@@ -2,9 +2,11 @@
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Thêm sinh viên vào lớp hành chính";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
+
+@{var lopHC = ViewBag.lopHC as List<QLDD_MVC.Models.LopHC>;}
 
 
 
@@ -50,18 +52,37 @@
                     </div>
                 </div>
 
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.malophc, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @if (@ViewBag.malophc == null)
+                            {
+                                <input value=@ViewBag.malophc name="malophc" class="form-control" />
+                            }
+                            else
+                            {
+                                <input value=@ViewBag.malophc name="malophc" class="form-control" readonly />
+                            }
+                            @Html.ValidationMessageFor(model => model.malophc, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
                 <div class="form-group">
-                    @Html.LabelFor(model => model.malophc, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <lable class="control-label col-md-2">Lớp hành chính</lable>
                     <div class="col-md-10">
-                        @if (@ViewBag.malophc == null)
-                        {
-                            <input value=@ViewBag.malophc name="malophc" class="form-control" />
-                        }
-                        else
-                        {
-                            <input value=@ViewBag.malophc name="malophc" class="form-control" readonly />
-                        }
-                        @Html.ValidationMessageFor(model => model.malophc, "", new { @class = "text-danger" })
+                        <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="malophc" id="selectpick">
+                            <option value="0"></option>
+                            @foreach (var item in lopHC)
+                            {
+                                if (ViewBag.malophc == item.malophc)
+                                {
+                                    <option selected value="@item.malophc">@item.tenlophc - Mã lớp : @item.malophc</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.malophc">@item.tenlophc - Mã lớp : @item.malophc</option>
+                                }
+                            }
+                        </select>
                     </div>
                 </div>
 
@@ -121,3 +142,10 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $('#selectpick').selectpicker({
+            dropupAuto: false
+        });
+    </script>
+}

@@ -3,7 +3,7 @@
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
 @{
-    ViewBag.Title = "Index_LopHC";
+    ViewBag.Title = "Thông tin điểm danh của sinh viên" + ViewBag.hoten;
     Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
 }
 
@@ -47,7 +47,7 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            int? maloptc = db.diemdanhs.Find(item.madd).maloptc;
+                            string maloptc = db.diemdanhs.Find(item.madd).maloptc;
 
                             <tr id="row_@item.id">
                                 <td>@ViewBag.hoten</td>
@@ -91,3 +91,38 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: ''
+                    }, {
+                        extend: 'pdf',
+                        title: ''
+                    }
+                ],
+                stateSave: true,
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

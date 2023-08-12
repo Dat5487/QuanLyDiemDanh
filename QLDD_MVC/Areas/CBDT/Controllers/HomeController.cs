@@ -8,19 +8,18 @@ using System.Web.Mvc;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
+    [Authorize]
+
     public class HomeController : Controller
     {
         private DataContextDB db = new DataContextDB();
-        // GET: CBDT/Home
-        public HomeController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
         public ActionResult Index()
         {
-            LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
+
+            TempData.Keep("magv");
             var dao = new Data.ListAllPaging();
             ViewData["slsinhvien"] = db.Sinhviens.Count();
             ViewData["slgiangvien"] = db.giangviens.Count();
@@ -36,8 +35,17 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 ViewData["sllophcofgv"] = dao.ListAllLopHCofGVPaging(magv).Count();
             }
             ViewData["slloptcofgv"] = dao.ListAllLopTCofGVPaging(magv).Count();
-
+            SetHotengv();
             return View();
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
     }
 }

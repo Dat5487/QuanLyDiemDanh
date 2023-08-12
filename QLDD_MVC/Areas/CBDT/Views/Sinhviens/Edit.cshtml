@@ -3,9 +3,10 @@
 @{DataContextDB db = new DataContextDB(); }
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Chỉnh sửa thông tin sinh viên";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
+@{var lopHC = ViewBag.lopHC as List<QLDD_MVC.Models.LopHC>;}
 
 @using (Html.BeginForm())
 {
@@ -58,11 +59,31 @@
                         </div>
                     </div>
 
+                    @*<div class="form-group">
+                            @Html.LabelFor(model => model.malophc, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.malophc, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.malophc, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+
                     <div class="form-group">
-                        @Html.LabelFor(model => model.malophc, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <lable class="control-label col-md-2">Lớp hành chính</lable>
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.malophc, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.malophc, "", new { @class = "text-danger" })
+                            <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="magv" id="selectpick">
+                                <option value="0"></option>
+                                @foreach (var item in lopHC)
+                                {
+                                    if (Model.malophc == item.malophc)
+                                    {
+                                        <option selected value="@item.malophc">@item.tenlophc - Mã lớp : @item.malophc</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.malophc">@item.tenlophc - Mã lớp : @item.malophc</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
 

@@ -4,7 +4,7 @@
 
 @{
 
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Danh sách lớp hành chính";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -61,9 +61,9 @@
                                 <td>@item.khoa</td>
                                 <td>@db.Sinhviens.Where(x => x.malophc == item.malophc).Count()</td>
                                 <td>
-                                    @Html.ActionLink("Xem SV trong lớp", "Details", new { id = item.malophc, name = item.tenlophc, root = "DsLopHC" }, new { @class = "btn btn-primary" })
-                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.malophc }, new { @class = "btn btn-warning" })
-                                    @Html.ActionLink("Xóa", "Delete", new { id = item.malophc }, new { @class = "btn btn-danger" })
+                                    @Html.ActionLink("Xem SV trong lớp", "Details", new { malophc = item.malophc, name = item.tenlophc, root = "DsLopHC" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { malophc = item.malophc }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { malophc = item.malophc }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>
                         }
@@ -73,3 +73,27 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+                },
+                stateSave: true,
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

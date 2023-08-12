@@ -5,7 +5,7 @@
 
 
 @{
-    ViewBag.Title = "DsAllSinhVien";
+    ViewBag.Title = "Danh sách các sinh viên trong hệ thống";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,7 +20,7 @@
                     <h4 class="font-weight-bold text-primary">Danh sách các sinh viên trong hệ thống</h4>
                 </div>
                 <div class="col-2">
-                    @Html.ActionLink("Thêm sinh viên", "Create", new { id = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
+                    @Html.ActionLink("Thêm sinh viên", "Create", new { malophc = @ViewBag.malophc, tenlophc = @ViewBag.tenlophc }, new { @class = "btn btn-success float-right" })
                 </div>
             </div>
         </div>
@@ -59,15 +59,15 @@
                                     {
                                         @db.LopHCs.Find(item.malophc).tenlophc
                                     }
-                            </td>
-                            <td>@item.khoa</td>
-                            <td>
-                                @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv,root = "DsAllSV" }, new { @class = "btn btn-primary" })
-                                @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.masv }, new { @class = "btn btn-warning" })
-                                @Html.ActionLink("Xóa", "Delete", new { id = item.masv }, new { @class = "btn btn-danger" })
-                            </td>
-                        </tr>
-                    }
+                                </td>
+                                <td>@item.khoa</td>
+                                <td>
+                                    @Html.ActionLink("Xem thông tin điểm danh", "Index_LopHC", "diemdanhs", new { masv = item.masv, root = "DsAllSV" }, new { @class = "btn btn-primary" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { masv = item.masv }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { masv = item.masv }, new { @class = "btn btn-danger" })
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -76,3 +76,27 @@
 </div>
 
 
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}
