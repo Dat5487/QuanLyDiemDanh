@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using QLDD_MVC.Models;
+using API.Models;
 
 namespace API.Controllers
 {
@@ -48,7 +49,7 @@ namespace API.Controllers
             base.Dispose(disposing);
         }
 
-        private bool LopTCExists(int id)
+        private bool LopTCExists(string id)
         {
             return db.LopTCs.Count(e => e.maloptc == id) > 0;
         }

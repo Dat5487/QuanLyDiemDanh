@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace QLDD_MVC.Models
 {
@@ -23,10 +24,13 @@ namespace QLDD_MVC.Models
         public virtual DbSet<Sinhvien> Sinhviens { get; set; }
         public virtual DbSet<TaiKhoan> TaiKhoans { get; set; }
         public virtual DbSet<Hocphan> Hocphans { get; set; }
+        public virtual DbSet<TempSV> TempSV { get; set; }
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<giangvien>()
                 .Property(e => e.email)
                 .IsFixedLength();

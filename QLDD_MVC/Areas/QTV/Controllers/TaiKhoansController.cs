@@ -11,10 +11,13 @@ using QLDD_MVC.Dao;
 using QLDD_MVC.Common;
 using System.Web.Routing;
 using QLDD_MVC.Areas.QTV.Data;
+using QLDD_MVC.Code;
+using QLDD_MVC.Controllers;
 
 namespace QLDD_MVC.Areas.QTV.Controllers
 {
-    public class TaiKhoansController : Controller
+    [Authorize]
+    public class TaiKhoansController : BaseController
     {
         private DataContextDB db = new DataContextDB();
 
@@ -27,13 +30,13 @@ namespace QLDD_MVC.Areas.QTV.Controllers
         }
 
         // GET: QTV/TaiKhoans/Details/5
-        public ActionResult Details(string id)
+        public ActionResult Details(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaiKhoan taiKhoan = db.TaiKhoans.Find(id);
+            TaiKhoan taiKhoan = db.TaiKhoans.Find(username);
             if (taiKhoan == null)
             {
                 return HttpNotFound();
@@ -56,17 +59,19 @@ namespace QLDD_MVC.Areas.QTV.Controllers
         {
             if (ModelState.IsValid)
             {
+                taiKhoan.password = Encryptor.MD5Hash(taiKhoan.password);
                 if(db.TaiKhoans.Find(taiKhoan.username) != null)
                 {
                     return RedirectToAction("Index", "Error", new { error = "Tên đăng nhập đã tồn tại trong hệ thống" });
                 }
                 db.TaiKhoans.Add(taiKhoan);
                 db.SaveChanges();
-                if(taiKhoan.phanquyen == "Cán bộ đào tạo")
+                if(taiKhoan.phanquyen == "Cán bộ quản lý đào tạo")
                 {
                     giangvien gv = new giangvien();
                     gv.Creategiangvien(taiKhoan.username,taiKhoan.hoten);
-                }    
+                }
+                SetAlert("Tạo tài khoản thành công", "success");
                 return RedirectToAction("Index");
             }
 
@@ -74,13 +79,13 @@ namespace QLDD_MVC.Areas.QTV.Controllers
         }
 
         // GET: QTV/TaiKhoans/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaiKhoan taiKhoan = db.TaiKhoans.Find(id);
+            TaiKhoan taiKhoan = db.TaiKhoans.Find(username);
             if (taiKhoan == null)
             {
                 return HttpNotFound();
@@ -93,28 +98,33 @@ namespace QLDD_MVC.Areas.QTV.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "username,hoten,phanquyen,password")] TaiKhoan taiKhoan)
+        public ActionResult Edit([Bind(Include = "username,hoten,phanquyen,password")] TaiKhoan taiKhoan,string pass)
         {
             if (ModelState.IsValid)
             {
+                if (taiKhoan.password == null)
+                    taiKhoan.password = pass;
+                else
+                    taiKhoan.password = Encryptor.MD5Hash(taiKhoan.password);
                 db.Entry(taiKhoan).State = EntityState.Modified;
                 db.SaveChanges();
                 giangvien gv = new giangvien();
-                if(taiKhoan.phanquyen== "Cán bộ đào tạo" && db.giangviens.Where(x=>x.username == taiKhoan.username).FirstOrDefault() != null )
+                if(taiKhoan.phanquyen== "Cán bộ quản lý đào tạo" && db.giangviens.Where(x=>x.username == taiKhoan.username).FirstOrDefault() != null )
                     gv.Editgiangvien(db.giangviens.Where(x=>x.username == taiKhoan.username).FirstOrDefault().magv, taiKhoan.hoten);
+                SetAlert("Chỉnh sửa tài khoản thành công", "success");
                 return RedirectToAction("Index");
             }
             return View(taiKhoan);
         }
 
         // GET: QTV/TaiKhoans/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(string username)
         {
-            if (id == null)
+            if (username == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TaiKhoan taiKhoan = db.TaiKhoans.Find(id);
+            TaiKhoan taiKhoan = db.TaiKhoans.Find(username);
             if (taiKhoan == null)
             {
                 return HttpNotFound();
@@ -125,11 +135,16 @@ namespace QLDD_MVC.Areas.QTV.Controllers
         // POST: QTV/TaiKhoans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string username)
         {
-            TaiKhoan taiKhoan = db.TaiKhoans.Find(id);
+            if(db.giangviens.FirstOrDefault(x=>x.username == username) != null)
+            {
+                return RedirectToAction("Index", "Error", new { error = "Tài khoản này đang được giảng viên sử dụng"});
+            }
+            TaiKhoan taiKhoan = db.TaiKhoans.Find(username);
             db.TaiKhoans.Remove(taiKhoan);
             db.SaveChanges();
+            SetAlert("Xóa tài khoản thành công", "success");
             return RedirectToAction("Index");
         }
 

@@ -1,11 +1,11 @@
 ﻿@model QLDD_MVC.Models.giangvien
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Chỉnh sửa thông tin giảng viên";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "giangviens", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -86,6 +86,12 @@
                         <div class="col-md-10">
                             @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.username, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UserPhoto, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input type="file" name="postedFile" accept="image/*" />
                         </div>
                     </div>
                     <div class="form-group mx-2">

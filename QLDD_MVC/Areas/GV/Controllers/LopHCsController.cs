@@ -11,43 +11,47 @@ using QLDD_MVC.Models;
 
 namespace QLDD_MVC.Areas.GV.Controllers
 {
+    [Authorize]
     public class LopHCsController : Controller
     {
         private DataContextDB db = new DataContextDB();
-
-        public LopHCsController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-
-        // GET: CBDT/LopHCs
         public ActionResult Index()
         {
             LoginController lg = new LoginController();
-            int magv = lg.Getmagv();
+            string magv = "";
+            if (TempData["magv"] != null)
+                magv = TempData["magv"] as string;
+
+            TempData.Keep("magv");
             if (db.LopHCs.Where(x => x.magv == magv).FirstOrDefault() == null)
                 return RedirectToAction("Index", "Error", new { error = "Bạn không chủ nhiệm lớp hành chính nào" });
 
             IQueryable<LopHC> model = db.LopHCs.Where(x => x.magv == magv);
+            SetHotengv();
             return View(model);
         }
 
-        // GET: CBDT/LopHCs/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(string malophc)
         {
-            if (id == null)
+            if (malophc == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            LopHC lopHC = db.LopHCs.Find(id);
+            LopHC lopHC = db.LopHCs.Find(malophc);
             if (lopHC == null)
             {
                 return HttpNotFound();
             }
-            string searchString = null;
-            //string idtype;
-            return RedirectToAction("Index", "Sinhviens", new { id = id });
+            return RedirectToAction("Index", "Sinhviens", new { malophc = malophc });
+        }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
+
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
         }
         protected override void Dispose(bool disposing)
         {

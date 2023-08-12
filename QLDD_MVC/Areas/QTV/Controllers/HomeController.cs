@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace QLDD_MVC.Areas.QTV.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private DataContextDB db = new DataContextDB();

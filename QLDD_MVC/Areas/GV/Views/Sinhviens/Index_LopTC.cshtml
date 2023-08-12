@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<QLDD_MVC.Models.Sinhvien>
 @using QLDD_MVC.Models;
 @{DataContextDB db = new DataContextDB(); }
-@{int maloptc = @ViewBag.maloptc; }
+@{string maloptc = @ViewBag.maloptc; }
 @{List<int> dsmadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).ToList();}
 @{ int sobuoidadd = db.diemdanhs.Where(x => x.maloptc == maloptc).Select(x => x.madd).Count();}
 
 
 @{
-    ViewBag.Title = "Index_LopTC";
+    ViewBag.Title = "Danh sách sinh viên trong lớp tín chỉ : " + ViewBag.tenltc;
     Layout = "~/Areas/GV/Views/Shared/_Layout.cshtml";
 }
 
@@ -22,12 +22,12 @@
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách sinh viên trong lớp tín chỉ : @ViewBag.tenltc</h4>
                 </div>
                 <div class="col-6">
-                    @Html.ActionLink("Quay lại", "Index", "LopTCs", new { id = ViewBag.maloptc }, new { @class = "btn btn-danger float-right" })
+                    @Html.ActionLink("Quay lại", "Index", "LopTCs", new { maloptc = ViewBag.maloptc }, new { @class = "btn btn-danger float-right" })
                     <div class="dropdown show px-1 float-right">
                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Thông tin điểm danh theo ngày
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-menu pl-2" aria-labelledby="dropdownMenuLink">
                             @{
                                 if (dsmadd.Count() == 0)
                                 {
@@ -37,12 +37,13 @@
                                 {
                                     foreach (int madd in dsmadd)
                                     {
-                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary" })
+                                        @Html.ActionLink(@db.diemdanhs.Find(madd).ngaydd.ToString("dd-MM-yyyy"), "GetdiemdanhByDate", "diemdanhs", new { maloptc = maloptc, date = @db.diemdanhs.Find(madd).ngaydd }, new { @class = "btn btn-outline-secondary mt-1 ml-1" })
                                     }
                                 }
                             }
                         </div>
                     </div>
+                    @Html.ActionLink("Tạo điểm danh", "TaoHdDD", "diemdanhs", new { maloptc = maloptc }, new { @class = "btn btn-success float-right ml-1" })
                 </div>
             </div>
         </div>
@@ -115,3 +116,38 @@
 </div>
 
 
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+
+                },
+                dom: '<"clear"><"row"<"col"l><"col"f>>rt<"row"<"col"i><"col"p>><"row"<"col"B>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: ''
+                    }, {
+                        extend: 'pdf',
+                        title: ''
+                    }
+                ],
+                stateSave: true,
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

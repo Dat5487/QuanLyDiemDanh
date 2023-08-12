@@ -8,8 +8,10 @@
     using System.Data;
     using System.Data.Entity.Spatial;
     using System.Data.SqlClient;
+    using System.Linq;
 
     [Table("diemdanh")]
+
     public partial class diemdanh : KetNoiSql
     {
         DataSet ds = new DataSet();
@@ -23,49 +25,62 @@
             da1.Fill(ds, "diemdanh");
         }
 
-        public void CreateDiemdanh(int? maloptc, string diadiem)
+        public void CreateDiemdanh(string maloptc)
         {
             DataRow r = ds.Tables["diemdanh"].NewRow();
             DataRow[] rows = ds.Tables["diemdanh"].Select();
             r["maloptc"] = maloptc;
             r["ngaydd"] = DateTime.Now;
-            r["diadiem"] = diadiem;
+            r["trangthaidd"] = true;
 
             ds.Tables["diemdanh"].Rows.Add(r);
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
 
-        public void DeleteDiemdanh(int? maloptc)
+        public void DeleteDiemdanh(string maloptc)
         {
-            string query = String.Format("maloptc = {0}", maloptc);
+            string query = String.Format("maloptc = '{0}'", maloptc);
             DataRow[] rows = ds.Tables["diemdanh"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
 
-        public void DeleteHDDiemdanh(int? maloptc)
+        public void DeleteHDDiemdanh(string maloptc)
         {
-            string query = String.Format("maloptc = {0} AND ngaydd = '{1}'", maloptc,DateTime.Now.Date);
+            string query = String.Format("maloptc = '{0}' AND ngaydd = '{1}'", maloptc,DateTime.Now.Date);
             DataRow[] rows = ds.Tables["diemdanh"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
+        public void KetthucHdDD(string maloptc)
+        {
+            string query = String.Format("maloptc = '{0}' AND ngaydd = '{1}'", maloptc, DateTime.Now.Date);
+            DataRow[] rows = ds.Tables["diemdanh"].Select(query);
+            if (rows.Length > 0)
+            {
+                rows[0].BeginEdit();
+                rows[0]["trangthaidd"] = false;
+                rows[0].EndEdit();
+                da1.Update(ds, "diemdanh");
+                ds.AcceptChanges();
+            }
+        }
+
 
         [Key]
         [DisplayName("Mã điểm danh")]
         public int madd { get; set; }
 
         [DisplayName("Mã lớp tín chỉ")]
-        public int? maloptc { get; set; }
+        public string maloptc { get; set; }
 
         public DateTime ngaydd { get; set; }
 
-        [StringLength(50)]
-        [DisplayName("Địa điểm")]
-        public string diadiem { get; set; }
+        [DisplayName("Trạng thái")]
+        public bool trangthaidd { get; set; }
 
 
 

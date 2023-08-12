@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<QLDD_MVC.Models.Hocphan>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Danh sách học phần";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
@@ -45,8 +45,8 @@
                                 <td>@item.tenhp</td>
                                 <td>@item.sotc</td>
                                 <td>
-                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.mahp.TrimEnd(' ') }, new { @class = "btn btn-warning" })
-                                    @Html.ActionLink("Xóa", "Delete", new { id = item.mahp.TrimEnd(' ') }, new { @class = "btn btn-danger" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { mahp = item.mahp.TrimEnd(' ') }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { mahp = item.mahp.TrimEnd(' ') }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>
                         }
@@ -56,3 +56,27 @@
         </div>
     </div>
 </div>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                language: {
+                    searchPlaceholder: "Tìm kiếm",
+                    search: "",
+                    "sInfo": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
+                    "sInfoEmpty": "Hiển thị 0 đến 0 của 0 mục",
+                    "sInfoFiltered": "Lọc từ _MAX_ mục",
+                    "sLengthMenu": "Hiện _MENU_ mục",
+                    "sEmptyTable": "Không có dữ liệu",
+                },
+                stateSave: true,
+            });
+        });
+
+        $(document).ready(function () {
+            $('.dataTables_filter input[type="search"]').css(
+                { 'width': '350px', 'display': 'inline-block', 'height': '40px' }
+            );
+        });
+    </script>
+}

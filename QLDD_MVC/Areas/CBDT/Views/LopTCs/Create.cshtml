@@ -1,10 +1,12 @@
 ﻿@model QLDD_MVC.Models.LopTC
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Thêm lớp tín chỉ mới";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
+@{var giangvien = ViewBag.GV as List<QLDD_MVC.Models.giangvien>;
+  var hocphan = ViewBag.HP as List<QLDD_MVC.Models.Hocphan>;}
 <div class="card shadow mb-4 mx-4">
     <div class="card-header py-3">
         <h4 class="m-0 font-weight-bold text-primary">Thêm lớp tín chỉ mới</h4>
@@ -16,19 +18,29 @@
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.mahp, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.mahp, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.mahp, "", new { @class = "text-danger" })
-                    </div>
+            <div class="form-group">
+                <lable class="control-label col-md-2">Học phần</lable>
+                <div class="col-md-10">
+                    <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="mahp" id="selectpick">
+                        <option value="0"></option>
+                        @foreach (var item in hocphan)
+                        {
+                            <option value="@item.mahp">@item.tenhp - Mã học phần : @item.mahp</option>
+                        }
+                    </select>
                 </div>
+            </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.magv, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <lable class="control-label col-md-2">Giảng viên</lable>
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.magv, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.magv, "", new { @class = "text-danger" })
+                        <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="magv" id="selectpick">
+                            <option value="0"></option>
+                            @foreach (var item in giangvien)
+                            {
+                                <option value="@item.magv">@item.hoten - Mã giảng viên : @item.magv</option>
+                            }
+                        </select>
                     </div>
                 </div>
 
@@ -66,3 +78,11 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#selectpick').selectpicker({
+            dropupAuto: false
+        });
+    </script>
+}

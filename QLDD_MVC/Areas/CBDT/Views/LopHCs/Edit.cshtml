@@ -1,10 +1,10 @@
 ﻿@model QLDD_MVC.Models.LopHC
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Chỉnh sửa thông tin lớp hành chính";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
-
+@{var giangvien = ViewBag.GV as List<QLDD_MVC.Models.giangvien>;}
 
 @using (Html.BeginForm())
 {
@@ -29,10 +29,22 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.magv, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <lable class="control-label col-md-2">Giảng viên</lable>
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.magv, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.magv, "", new { @class = "text-danger" })
+                            <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="magv" id="selectpick">
+                                <option value="0"></option>
+                                @foreach (var item in giangvien)
+                                {
+                                    if (Model.magv == item.magv)
+                                    {
+                                        <option selected value="@item.magv">@item.hoten - Mã giảng viên : @item.magv</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.magv">@item.hoten - Mã giảng viên : @item.magv</option>
+                                    }
+                                }
+                            </select>
                         </div>
                     </div>
 
@@ -40,7 +52,7 @@
                         @Html.LabelFor(model => model.khoa, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
                             <select class="form-control" name="khoa">
-                                <option value=''></option>
+                                <option value='0'></option>
                                 @if (Model.khoa == "Công nghệ thông tin")
                                 {
                                     <option selected value="Công nghệ thông tin">Công nghệ thông tin</option>
@@ -81,4 +93,11 @@
             </div>
         </div>
     </div>
+}
+@section scripts{
+    <script type="text/javascript">
+        $('#selectpick').selectpicker({
+            dropupAuto: false
+        });
+    </script>
 }

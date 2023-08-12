@@ -19,7 +19,7 @@ namespace QLDD_MVC.Models
             da1.Fill(ds, "GVTC");
         }
 
-        public void CreateGVTC(int magv, int maloptc, string username)
+        public void CreateGVTC(string magv, string maloptc, string username)
         {
             DataRow r = ds.Tables["GVTC"].NewRow();
             r["maloptc"] = maloptc;
@@ -31,18 +31,18 @@ namespace QLDD_MVC.Models
             ds.AcceptChanges();
         }
 
-        public void DeleteGVTC(int magv, int maloptc)
+        public void DeleteGVTC(string magv, string maloptc)
         {
-            string query = String.Format("magv = {0} AND maloptc = {1}", magv, maloptc);
+            string query = String.Format("magv = '{0}' AND maloptc = '{1}'", magv, maloptc);
             DataRow[] rows = ds.Tables["GVTC"].Select(query);
             rows[0].Delete();
             da1.Update(ds, "GVTC");
             ds.AcceptChanges();
         }
 
-        public void EditGVTC(int magv, int maloptc, string username)
+        public void EditGVTC(string magv, string maloptc, string username)
         {
-            string query = String.Format("maloptc = {0}", maloptc);
+            string query = String.Format("maloptc = '{0}'", maloptc);
             DataRow[] rows = ds.Tables["GVTC"].Select(query);
             if (rows.Length > 0)
             {
@@ -57,9 +57,9 @@ namespace QLDD_MVC.Models
         }
         public int id { get; set; }
 
-        public int magv { get; set; }
+        public string magv { get; set; }
 
-        public int maloptc { get; set; }
+        public string maloptc { get; set; }
         public string username { get; set; }
 
     }

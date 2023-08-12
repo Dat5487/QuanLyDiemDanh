@@ -184,20 +184,19 @@ CREATE TABLE [dbo].[TaiKhoan](
 ) ON [PRIMARY]
 GO
 
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[LopTC_SV](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[maloptc] [int] NOT NULL,
-	[masv] [int] NOT NULL,
- CONSTRAINT [PK_LopTC_SV] PRIMARY KEY CLUSTERED 
+CREATE TABLE LopTC_SV
 (
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+  id int IDENTITY(1,1) Primary key,
+  masv   NCHAR(9) NOT NULL,
+  maloptc  int NOT NULL,
+  CONSTRAINT UC_LopTC_SV UNIQUE (masv,maloptc)
+);
+
+CREATE TABLE TempSV
+(
+  masv NCHAR(9) NOT NULL
+  CONSTRAINT UC_TempSV UNIQUE (masv)
+);
 
 USE [QLDD]
 GO
@@ -208,8 +207,8 @@ VALUES ('giangvien', N'Giảng viên 1', N'Giảng viên','123'),
 		('giangvien3', N'Giảng viên 3', N'Giảng viên','123'),
 		('admin', N'Quản trị viên 1', N'Quản trị viên','123'),
 		('admin2', N'Quản trị viên 2', N'Quản trị viên','123'),
-		('cbdt', N'Cán bộ đào tạo 1', N'Cán bộ đào tạo','123'),
-		('cbdt2', N'Cán bộ đào tạo 2', N'Cán bộ đào tạo','123');
+		('cbdt', N'Cán bộ quản lý đào tạo 1', N'Cán bộ quản lý đào tạo','123'),
+		('cbdt2', N'Cán bộ quản lý đào tạo 2', N'Cán bộ quản lý đào tạo','123');
 
 
 INSERT INTO giangvien(hoten, gioitinh, diachi, email, sdt, username)

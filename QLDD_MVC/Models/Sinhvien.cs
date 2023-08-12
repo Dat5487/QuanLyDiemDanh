@@ -25,7 +25,7 @@
 
         public void EditSinhvien(string masv, string EmbFace)
         {
-            string query = String.Format("masv = {0}", masv);
+            string query = String.Format("masv = '{0}'", masv);
             DataRow[] rows = ds.Tables["Sinhvien"].Select(query);
             if (rows.Length > 0)
             {
@@ -52,7 +52,7 @@
         public string gioitinh { get; set; }
 
         [DisplayName("Mã lớp hành chính")]
-        public int? malophc { get; set; }
+        public string malophc { get; set; }
 
         [StringLength(50)]
         [DisplayName("Khoa")]

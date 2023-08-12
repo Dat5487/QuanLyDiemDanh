@@ -2,45 +2,45 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using QLDD_MVC.Areas.CBDT.Data;
 using QLDD_MVC.Controllers;
 using QLDD_MVC.Models;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class giangviensController : Controller
+    [Authorize]
+
+    public class giangviensController : BaseController
     {
         private DataContextDB db = new DataContextDB();
+        giangvien gv = new giangvien();
 
-        // GET: CBDT/giangviens
-        public giangviensController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
         public ActionResult Index()
         {
             var dao = new ListAllPaging();
             var model = dao.ListAllGiangVienPaging();
+            SetHotengv();
             return View(model);
         }
 
-        // GET: CBDT/giangviens/Create
         public ActionResult Create()
         {
+            SetHotengv();
             return View();
         }
 
-        // POST: CBDT/giangviens/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "magv,hoten,gioitinh,diachi,email,sdt,username")] giangvien giangvien)
+        public ActionResult Create([Bind(Include = "id,magv,hoten,gioitinh,diachi,email,sdt,username,UserPhoto")] giangvien giangvien, HttpPostedFileBase postedFile)
         {
             if (ModelState.IsValid)
             {
@@ -55,38 +55,47 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                     {
                         return RedirectToAction("Index", "Error", new { error = "Đã giáo viên có tên đăng nhập này trong hệ thống" });
                     }
-                    db.giangviens.Add(giangvien);
-                    db.SaveChanges();
+                    gv.CreateGV(giangvien.hoten, giangvien.gioitinh, giangvien.diachi, giangvien.email, giangvien.sdt, giangvien.username, Upload(postedFile));
+                    SetAlert("Thêm giảng viên thành công", "success");
                     return RedirectToAction("Index");
                 }
                 else
-                    return RedirectToAction("Index","Error", new { error = "Không có tài khoản trong hệ thống" });
+                    return RedirectToAction("Index", "Error", new { error = "Không có tài khoản trong hệ thống" });
             }
-
+            SetHotengv();
             return View(giangvien);
         }
 
-        // GET: CBDT/giangviens/Edit/5
-        public ActionResult Edit(int? id)
+        public byte[] Upload(HttpPostedFileBase postedFile)
         {
-            if (id == null)
+            byte[] bytes = null;
+            if(postedFile != null)
+            {
+                using (BinaryReader br = new BinaryReader(postedFile.InputStream))
+                {
+                    bytes = br.ReadBytes(postedFile.ContentLength);
+                }
+            }
+            return bytes;
+        }
+        public ActionResult Edit(string magv)
+        {
+            if (magv == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            giangvien giangvien = db.giangviens.Find(id);
+            giangvien giangvien = db.giangviens.Find(magv);
             if (giangvien == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(giangvien);
         }
 
-        // POST: CBDT/giangviens/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "magv,hoten,gioitinh,diachi,email,sdt,username")] giangvien giangvien)
+        public ActionResult Edit([Bind(Include = "magv,hoten,gioitinh,diachi,email,sdt,username")] giangvien giangvien, HttpPostedFileBase postedFile)
         {
             if (ModelState.IsValid)
             {
@@ -103,52 +112,61 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
                 //{
                 //    return RedirectToAction("Index", "Error", new { error = "Tên đăng nhập đã được sử dụng bởi giảng viên khác" });
                 //}
+                gv.EditGV(giangvien.magv, giangvien.hoten, giangvien.gioitinh, giangvien.diachi, giangvien.email, giangvien.sdt, giangvien.username, Upload(postedFile));
+                //Đổi tên gv thì đổi tên cả tài khoản
+                if (db.giangviens.Find(giangvien.magv) != null)
+                    tk.EditTaiKhoan(db.giangviens.Find(giangvien.magv).username, giangvien.hoten);
 
-                db.Entry(giangvien).State = EntityState.Modified;
-                db.SaveChanges();
-
-                if(db.giangviens.Find(giangvien.magv) != null)
-                    tk.EditTaiKhoan(db.giangviens.Find(giangvien.magv).username,giangvien.hoten);
+                SetAlert("Chỉnh sửa thông tin giảng viên thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(giangvien);
         }
 
-        // GET: CBDT/giangviens/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string magv)
         {
-            if (id == null)
+            if (magv == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (db.LopTCs.Where(x => x.magv == id).FirstOrDefault() != null)
+            if (db.LopTCs.Where(x => x.magv == magv).FirstOrDefault() != null)
             {
                 return RedirectToAction("Index", "Error", new { error = "Giảng viên này vẫn đang quản lý một lớp tín chỉ" });
             }
-            if (db.LopHCs.Where(x => x.magv == id).FirstOrDefault() != null)
+            if (db.LopHCs.Where(x => x.magv == magv).FirstOrDefault() != null)
             {
                 return RedirectToAction("Index", "Error", new { error = "Giảng viên này vẫn đang quản lý một lớp hành chính" });
             }
-            giangvien giangvien = db.giangviens.Find(id);
+            giangvien giangvien = db.giangviens.Find(magv);
             if (giangvien == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(giangvien);
         }
 
-        // POST: CBDT/giangviens/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string magv)
         {
 
-            giangvien giangvien = db.giangviens.Find(id);
+            giangvien giangvien = db.giangviens.Find(magv);
             db.giangviens.Remove(giangvien);
             db.SaveChanges();
+            SetAlert("Xóa giảng viên thành công", "success");
             return RedirectToAction("Index");
         }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -157,5 +175,6 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

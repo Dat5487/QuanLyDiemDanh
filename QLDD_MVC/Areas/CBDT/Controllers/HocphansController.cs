@@ -11,46 +11,38 @@ using QLDD_MVC.Models;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
-    public class HocphansController : Controller
+    [Authorize]
+
+    public class HocphansController : BaseController
     {
         private DataContextDB db = new DataContextDB();
 
-        public HocphansController()
-        {
-            LoginController lg = new LoginController();
-            ViewBag.hotengv = lg.Gethotengv();
-        }
-
-        // GET: CBDT/Hocphans
         public ActionResult Index()
         {
             return View(db.Hocphans.ToList());
         }
 
-        // GET: CBDT/Hocphans/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(string mahp)
         {
-            if (id == null)
+            if (mahp == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Hocphan hocphan = db.Hocphans.Find(id);
+            Hocphan hocphan = db.Hocphans.Find(mahp);
             if (hocphan == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(hocphan);
         }
 
-        // GET: CBDT/Hocphans/Create
         public ActionResult Create()
         {
+            SetHotengv();
             return View();
         }
 
-        // POST: CBDT/Hocphans/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "mahp,tenhp,sotc")] Hocphan hocphan)
@@ -59,30 +51,28 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             {
                 db.Hocphans.Add(hocphan);
                 db.SaveChanges();
+                SetAlert("Thêm học phần thành công", "success");
                 return RedirectToAction("Index");
             }
-
+            SetHotengv();
             return View(hocphan);
         }
 
-        // GET: CBDT/Hocphans/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(string mahp)
         {
-            if (id == null)
+            if (mahp == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Hocphan hocphan = db.Hocphans.Find(id);
+            Hocphan hocphan = db.Hocphans.Find(mahp);
             if (hocphan == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(hocphan);
         }
 
-        // POST: CBDT/Hocphans/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "mahp,tenhp,sotc")] Hocphan hocphan)
@@ -91,37 +81,47 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             {
                 db.Entry(hocphan).State = EntityState.Modified;
                 db.SaveChanges();
+                SetAlert("Chỉnh sửa học phần thành công", "success");
                 return RedirectToAction("Index");
             }
+            SetHotengv();
             return View(hocphan);
         }
 
-        // GET: CBDT/Hocphans/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(string mahp)
         {
-            if (id == null)
+            if (mahp == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Hocphan hocphan = db.Hocphans.Find(id);
+            Hocphan hocphan = db.Hocphans.Find(mahp);
             if (hocphan == null)
             {
                 return HttpNotFound();
             }
+            SetHotengv();
             return View(hocphan);
         }
 
-        // POST: CBDT/Hocphans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string mahp)
         {
-            Hocphan hocphan = db.Hocphans.Find(id);
+            Hocphan hocphan = db.Hocphans.Find(mahp);
             db.Hocphans.Remove(hocphan);
             db.SaveChanges();
+            SetAlert("Xóa học phần thành công", "success");
             return RedirectToAction("Index");
         }
+        public void SetHotengv()
+        {
+            string hotengv = "";
+            if (TempData["hotengv"] != null)
+                hotengv = TempData["hotengv"] as string;
 
+            TempData.Keep("hotengv");
+            ViewBag.hotengv = hotengv;
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

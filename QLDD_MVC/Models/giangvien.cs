@@ -8,6 +8,7 @@
     using System.Data;
     using System.Data.Entity.Spatial;
     using System.Data.SqlClient;
+    using System.Web.Helpers;
 
     [Table("giangvien")]
     public partial class giangvien : KetNoiSql
@@ -34,8 +35,7 @@
             da1.Update(ds, "giangvien");
             ds.AcceptChanges();
         }
-
-        public void Editgiangvien(int magv, string hoten)
+        public void Editgiangvien(string magv, string hoten)
         {
             string query = String.Format("magv = '{0}'", magv);
             DataRow[] rows = ds.Tables["giangvien"].Select(query);
@@ -48,9 +48,60 @@
                 ds.AcceptChanges();
             }
         }
+
+        //Vì EF Code First không chấp nhận cột không có datatype (cột magv là computed columns)
+        //Nên phải dùng cách khác để insert cột
+        public void CreateGV(string hoten, string gioitinh, string diachi,string email, string sdt, string username, byte[] UserPhoto)
+        {
+            DataRow r = ds.Tables["giangvien"].NewRow();
+            r["hoten"] = hoten;
+            r["gioitinh"] = gioitinh;
+            r["diachi"] = diachi;
+            r["email"] = email;
+            r["sdt"] = sdt;
+            r["username"] = username;
+            r["UserPhoto"] = UserPhoto;
+            ds.Tables["giangvien"].Rows.Add(r);
+            da1.Update(ds, "giangvien");
+            ds.AcceptChanges();
+        }
+        public void EditGV(string magv,string hoten, string gioitinh, string diachi, string email, string sdt, string username, byte[] UserPhoto)
+        {
+            string query = String.Format("magv = '{0}'", magv);
+            DataRow[] rows = ds.Tables["giangvien"].Select(query);
+            if (rows.Length > 0)
+            {
+                rows[0].BeginEdit();
+                if(UserPhoto != null)
+                {
+                    rows[0]["hoten"] = hoten;
+                    rows[0]["gioitinh"] = gioitinh;
+                    rows[0]["diachi"] = diachi;
+                    rows[0]["email"] = email;
+                    rows[0]["sdt"] = sdt;
+                    rows[0]["username"] = username;
+                    rows[0]["UserPhoto"] = UserPhoto;
+                }
+                else
+                {
+                    rows[0]["hoten"] = hoten;
+                    rows[0]["gioitinh"] = gioitinh;
+                    rows[0]["diachi"] = diachi;
+                    rows[0]["email"] = email;
+                    rows[0]["sdt"] = sdt;
+                    rows[0]["username"] = username;
+                }
+                rows[0].EndEdit();
+                da1.Update(ds, "giangvien");
+                ds.AcceptChanges();
+            }
+        }
+
+
+        public int id { get; set; }
+
         [Key]
-        [DisplayName("Mã giảng viên")]
-        public int magv { get; set; }
+        public string magv { get; set; }
 
         [StringLength(50, ErrorMessage = "Họ tên phải dưới 50 ký tự")]
         [Required(ErrorMessage = "Bắt buộc phải nhập họ tên")]
@@ -76,5 +127,9 @@
         [StringLength(20)]
         [DisplayName("Tên đăng nhập")]
         public string username { get; set; }
+
+        [DisplayName("Ảnh")]
+        public byte[] UserPhoto { get; set; }
+
     }
 }

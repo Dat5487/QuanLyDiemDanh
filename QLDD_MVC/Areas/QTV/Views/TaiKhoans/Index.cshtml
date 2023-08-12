@@ -35,9 +35,6 @@
                         Phân quyền
                     </th>
                     <th>
-                        Mật khẩu
-                    </th>
-                    <th>
                         Thao tác
                     </th>
                     </thead>
@@ -49,10 +46,9 @@
                                 <td>@item.username</td>
                                 <td>@item.hoten</td>
                                 <td>@item.phanquyen</td>
-                                <td>@item.password</td>
                                 <td>
-                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.username.TrimEnd(' ') }, new { @class = "btn btn-warning" })
-                                    @Html.ActionLink("Xóa", "Delete", new { id = item.username.TrimEnd(' ') }, new { @class = "btn btn-danger" })
+                                    @Html.ActionLink("Chỉnh sửa", "Edit", new { username = item.username.TrimEnd(' ') }, new { @class = "btn btn-warning" })
+                                    @Html.ActionLink("Xóa", "Delete", new { username = item.username.TrimEnd(' ') }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>
                         }

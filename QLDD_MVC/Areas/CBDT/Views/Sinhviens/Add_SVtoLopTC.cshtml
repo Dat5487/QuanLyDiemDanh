@@ -2,10 +2,11 @@
 
 
 @{
-    ViewBag.Title = "Add_SVtoLopTC";
+    ViewBag.Title = "Thêm sinh viên vào lớp tín chỉ";
     Layout = "~/Areas/CBDT/Views/Shared/_Layout.cshtml";
 }
 
+@{var sinhvien = ViewBag.SV as List<QLDD_MVC.Models.Sinhvien>;}
 
 <div class="card shadow mb-4 mx-4">
     <div class="card-header py-3">
@@ -22,19 +23,31 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.maloptc, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        <input value=@ViewBag.maloptc name="maloptc" class=" form-control" readonly/>
+                        <input value=@ViewBag.maloptc name="maloptc" class=" form-control" readonly />
                         @Html.ValidationMessageFor(model => model.maloptc, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
+                @*<div class="form-group">
+                        @Html.LabelFor(model => model.masv, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.masv, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.masv, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
                 <div class="form-group">
-                    @Html.LabelFor(model => model.masv, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <lable class="control-label col-md-2">Sinh viên</lable>
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.masv, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.masv, "", new { @class = "text-danger" })
+                        <select class="form-control selectpicker" data-live-search="true" data-dropup-auto="false" name="masv" id="selectpick">
+                            <option value="0"></option>
+                            @foreach (var item in sinhvien)
+                            {
+                                <option value="@item.masv">@item.hoten - Mã sinh viên : @item.masv</option>
+                            }
+                        </select>
                     </div>
                 </div>
-
                 <div class="form-group mx-2">
                     <div class="col-md-offset-2 ">
                         <input type="submit" value="Thêm" class="btn btn-primary" />
@@ -46,3 +59,11 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#selectpick').selectpicker({
+            dropupAuto: false
+        });
+    </script>
+}
