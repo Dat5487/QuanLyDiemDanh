@@ -33,7 +33,6 @@ namespace API.Controllers
                 sv.malophc = x.malophc;
                 //sv.gioitinh = x.gioitinh;
                 sv.masv = x.masv;
-                //sv.EmbFace = x.EmbFace;
                 listtempsv.Add(sv);
             }
             IEnumerable<ApiSinhvien> model = listtempsv.AsQueryable();
@@ -54,7 +53,6 @@ namespace API.Controllers
                 sv.malophc = x.malophc;
                 //sv.gioitinh = x.gioitinh;
                 sv.masv = x.masv;
-                //sv.EmbFace = x.EmbFace;
                 listtempsv.Add(sv);
             }
             IEnumerable<ApiSinhvien> model = listtempsv.AsQueryable();
@@ -111,7 +109,6 @@ namespace API.Controllers
                 sv.malophc = x.malophc;
                 //sv.gioitinh = x.gioitinh;
                 sv.masv = x.masv;
-                //sv.EmbFace = x.EmbFace;
                 listtempsv.Add(sv);
             }
             IEnumerable<ApiSinhvien> model = listtempsv.AsQueryable();
@@ -120,22 +117,6 @@ namespace API.Controllers
 
         [Route("UpdateSinhvien")]
 
-        public IHttpActionResult UpdateSinhvien(UpdateModel updateModel)
-        {
-            Sinhvien sv = new Sinhvien();
-            if(db.Sinhviens.FirstOrDefault(x => x.masv.Equals(updateModel.masv)) !=null)
-            {
-                sv = db.Sinhviens.FirstOrDefault(x => x.masv.Equals(updateModel.masv));
-            }
-            else
-            {
-                return BadRequest("Không tìm thấy sinh viên");
-            }
-
-            Sinhvien SV = new Sinhvien();
-            SV.EditSinhvien(updateModel.masv, updateModel.EmbFace);
-            return Ok("Update thành công");
-        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

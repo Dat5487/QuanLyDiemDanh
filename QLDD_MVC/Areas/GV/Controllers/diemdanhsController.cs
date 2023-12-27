@@ -106,8 +106,9 @@ namespace QLDD_MVC.Areas.GV.Controllers
 
             diemdanh dd = new diemdanh();
             dd.CreateDiemdanh(maloptc);
-            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            EndPreviousDD();
 
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
             List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
             foreach (string ma1sv in ds_masv)
             {
@@ -140,6 +141,21 @@ namespace QLDD_MVC.Areas.GV.Controllers
             dd.KetthucHdDD(maloptc);
             return RedirectToAction("Index_LopTC", "Sinhviens", new { maloptc = maloptc });
         }
+        public void EndPreviousDD()
+        {
+            diemdanh dd = new diemdanh();
+            DateTime currentTime = DateTime.Now;
+            string now = currentTime.ToString("yyyy-MM-dd");
+            now += " 12:00:00 AM";
+            currentTime = DateTime.Parse(now);
+            //Danh sách lớp chưa kết thúc hoạt động điểm danh
+            var listLop = db.diemdanhs.Where(x => x.trangthaidd == true && x.ngaydd != currentTime).ToList();
+            foreach (diemdanh lop in listLop)
+            {
+                dd.KetthucHdDDKhacNgay(lop.madd);
+            }
+        }
+
         public void SetHotengv()
         {
             string hotengv = "";

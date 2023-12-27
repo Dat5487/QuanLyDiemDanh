@@ -58,7 +58,6 @@
         [DisplayName("Khoa")]
         public string khoa { get; set; }
         
-        public string EmbFace { get; set; }
 
     }
 }

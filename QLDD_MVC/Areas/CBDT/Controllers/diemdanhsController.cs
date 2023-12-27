@@ -11,6 +11,7 @@ using System.Web.UI;
 using QLDD_MVC.Models;
 using System.Diagnostics;
 using QLDD_MVC.Controllers;
+using System.Security.Cryptography.Xml;
 
 namespace QLDD_MVC.Areas.CBDT.Controllers
 {
@@ -99,16 +100,31 @@ namespace QLDD_MVC.Areas.CBDT.Controllers
             dd.ChangeStatus(maloptc, masv);
             return RedirectToAction("GetdiemdanhByDate", new { maloptc = maloptc, date = date, root= "DsLopTCofGV" });
         }
+        public void EndPreviousDD()
+        {
+            diemdanh dd = new diemdanh();
+            DateTime currentTime = DateTime.Now;
+            string now = currentTime.ToString("yyyy-MM-dd");
+            now += " 12:00:00 AM";
+            currentTime = DateTime.Parse(now);
+            //Danh sách lớp chưa kết thúc hoạt động điểm danh
+            var listLop = db.diemdanhs.Where(x => x.trangthaidd == true && x.ngaydd != currentTime).ToList();
+            foreach (diemdanh lop in listLop)
+            {
+                dd.KetthucHdDDKhacNgay(lop.madd);
+            }
+        }
         public ActionResult TaoHdDD(string maloptc)
         {
             var now = DateTime.Now.Date;
             if (db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault() != null)
                 return RedirectToAction("Index", "Error", new { error = "Lớp này đã tạo hoạt động điểm danh trong hôm nay" });
-
+            
             diemdanh dd = new diemdanh();
             dd.CreateDiemdanh(maloptc);
-            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
+            EndPreviousDD();
 
+            int madd = db.diemdanhs.Where(x => x.maloptc == maloptc && x.ngaydd == now).FirstOrDefault().madd; //Lấy madd vừa tạo
             List<string> ds_masv = db.LopTC_SV.Where(i => i.maloptc == maloptc).Select(x => x.masv).ToList();
             foreach (string ma1sv in ds_masv)
             {

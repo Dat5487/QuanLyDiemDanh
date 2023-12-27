@@ -140,7 +140,15 @@
                                 <td>@item.hoten</td>
                                 <td>@item.gioitinh</td>
                                 <td>@item.tenlophc</td>
-                                <td>@item.thoigiandd.ToString("dd-MM-yyyy HH:mm:ss")</td>
+                                @if (item.trangthai == true)
+                                {
+                                    <td>@item.thoigiandd.ToString("dd-MM-yyyy HH:mm:ss")</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+
                                 <td>
                                     @if (trangthaingaydd == false)
                                     {

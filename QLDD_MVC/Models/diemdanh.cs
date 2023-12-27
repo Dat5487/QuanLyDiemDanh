@@ -37,6 +37,10 @@
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
+        public void EndPreviousDiemdanh(string maloptc)
+        {
+            
+        }
 
         public void DeleteDiemdanh(string maloptc)
         {
@@ -55,6 +59,7 @@
             da1.Update(ds, "diemdanh");
             ds.AcceptChanges();
         }
+        //Trong ngày
         public void KetthucHdDD(string maloptc)
         {
             string query = String.Format("maloptc = '{0}' AND ngaydd = '{1}'", maloptc, DateTime.Now.Date);
@@ -68,7 +73,20 @@
                 ds.AcceptChanges();
             }
         }
-
+        //Khác ngày
+        public void KetthucHdDDKhacNgay(int madd)
+        {
+            string query = String.Format("madd = '{0}'", madd);
+            DataRow[] rows = ds.Tables["diemdanh"].Select(query);
+            if (rows.Length > 0)
+            {
+                rows[0].BeginEdit();
+                rows[0]["trangthaidd"] = false;
+                rows[0].EndEdit();
+                da1.Update(ds, "diemdanh");
+                ds.AcceptChanges();
+            }
+        }
 
         [Key]
         [DisplayName("Mã điểm danh")]
